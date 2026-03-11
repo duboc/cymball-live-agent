@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(source venv/bin/activate && python -c \"\nfrom app.agent.data.mock_data import CLIENTES\nfor k in ['jose_carlos_001','jose_carlos_002','jose_carlos_003','jose_carlos_004']:\n    c = CLIENTES.get\\(k\\)\n    print\\(f'{k}: {c[\\\\\"nome\\\\\"] if c else \\\\\"None\\\\\"} - id\\(data\\)={id\\(c\\)}'\\)\n\")"
+    ]
+  }
+}
