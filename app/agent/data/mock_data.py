@@ -61,6 +61,17 @@ CLIENTES = {
         "margem_disponivel": 8500.00,
         "margem_cartao_disponivel": 0.00,
         "contratos_ativos": 0,
+        "simulacao": {
+            "margem_consignavel_35": 980.00,
+            "taxa_mensal": 1.80,
+            "taxa_anual": 23.87,
+            "cet_mensal": 1.95,
+            "cet_anual": 26.08,
+            "iof_percentual": 0.38,
+            "iof_adicional_diario": 0.0082,
+            "prazo_maximo_meses": 84,
+            "sistema_amortizacao": "Tabela Price",
+        },
     },
 
     # =========================================================================
@@ -121,6 +132,17 @@ CLIENTES = {
         "margem_disponivel": 1400.00,
         "margem_cartao_disponivel": 0.00,
         "contratos_ativos": 0,
+        "simulacao": {
+            "margem_consignavel_35": 1120.00,
+            "taxa_mensal": 1.80,
+            "taxa_anual": 23.87,
+            "cet_mensal": 1.95,
+            "cet_anual": 26.08,
+            "iof_percentual": 0.38,
+            "iof_adicional_diario": 0.0082,
+            "prazo_maximo_meses": 84,
+            "sistema_amortizacao": "Tabela Price",
+        },
     },
 
     # =========================================================================
@@ -167,6 +189,17 @@ CLIENTES = {
         "margem_disponivel": 5124.79,
         "margem_cartao_disponivel": 0.00,
         "contratos_ativos": 1,
+        "simulacao": {
+            "margem_consignavel_35": 1330.00,
+            "taxa_mensal": 1.80,
+            "taxa_anual": 23.87,
+            "cet_mensal": 1.95,
+            "cet_anual": 26.08,
+            "iof_percentual": 0.38,
+            "iof_adicional_diario": 0.0082,
+            "prazo_maximo_meses": 84,
+            "sistema_amortizacao": "Tabela Price",
+        },
         "contrato_atual": {
             "numero": "CSG-2024-004567",
             "valor_emprestado": 18000.00,
@@ -255,6 +288,17 @@ CLIENTES = {
         "margem_disponivel": 12981.08,
         "margem_cartao_disponivel": 0.00,
         "contratos_ativos": 0,
+        "simulacao": {
+            "margem_consignavel_35": 1575.00,
+            "taxa_mensal": 1.80,
+            "taxa_anual": 23.87,
+            "cet_mensal": 1.95,
+            "cet_anual": 26.08,
+            "iof_percentual": 0.38,
+            "iof_adicional_diario": 0.0082,
+            "prazo_maximo_meses": 84,
+            "sistema_amortizacao": "Tabela Price",
+        },
     },
 
     # =========================================================================

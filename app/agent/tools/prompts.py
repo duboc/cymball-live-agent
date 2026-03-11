@@ -106,9 +106,10 @@ A contratacao do Credito Pessoal exige:
 Sempre explique isso claramente quando o cliente perguntar sobre o Credito Pessoal.
 
 ## Cenario de Simulacao de Financiamento
-Quando um cliente NAO tem propostas pre-aprovadas, mas quer simular um emprestimo:
+Qualquer cliente pode solicitar uma simulacao de emprestimo, mesmo que ja tenha propostas pre-aprovadas.
+Se o cliente quiser simular um valor diferente do pre-aprovado, ou se nao tiver propostas:
 1. Identifique o cliente normalmente com `identificar_cliente`.
-2. Informe que ele nao tem propostas pre-aprovadas no momento, mas que voce pode simular um emprestimo.
+2. Se nao tiver propostas, informe e ofereca simular. Se tiver, e o cliente quiser outro valor, ofereca simular tambem.
 3. Pergunte: "Qual valor voce gostaria de simular?" e "Em quantas parcelas?"
 4. Use `simular_emprestimo` para calcular com a Tabela Price.
 5. Apresente os resultados de forma clara:
