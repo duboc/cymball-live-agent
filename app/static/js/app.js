@@ -558,14 +558,18 @@ async function loadClientContext(clienteId) {
 
       // Calculate available limit / total pre-approved value
       const limiteEl = document.getElementById('ctx-limite');
+      const limiteLabelEl = document.getElementById('ctx-limite-label');
       const limiteDisponivel = c.valor_total_pre_aprovado || ((c.limite_credito || 0) - (c.limite_usado || 0));
       if (limiteDisponivel > 0) {
+        if (limiteLabelEl) limiteLabelEl.textContent = 'Valor Pre-Aprovado';
         limiteEl.textContent = `R$ ${limiteDisponivel.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
         limiteEl.style.color = 'var(--bank-success)';
       } else if (c.margem_disponivel) {
-        limiteEl.textContent = `Margem: R$ ${c.margem_disponivel.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        if (limiteLabelEl) limiteLabelEl.textContent = 'Margem Consignavel';
+        limiteEl.textContent = `R$ ${c.margem_disponivel.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
         limiteEl.style.color = 'var(--bank-warning)';
       } else {
+        if (limiteLabelEl) limiteLabelEl.textContent = 'Valor Pre-Aprovado';
         limiteEl.textContent = 'R$ 0,00';
         limiteEl.style.color = 'var(--bank-success)';
       }
@@ -697,11 +701,68 @@ async function loadTransactions(clienteId) {
         container.appendChild(item);
       });
     } else {
-      container.innerHTML = `
-        <div style="color: #888; text-align: center; padding: 20px;">
-          📄 Nenhuma movimentacao encontrada
-        </div>
-      `;
+      // Check if this client has simulation data
+      try {
+        const clientResp = await fetch(`/api/cliente/${clienteId}`);
+        const clientData = await clientResp.json();
+        if (clientData.success && clientData.cliente && clientData.cliente.simulacao) {
+          const sim = clientData.cliente.simulacao;
+          container.innerHTML = `
+            <div style="padding: 16px;">
+              <div style="text-align: center; margin-bottom: 16px;">
+                <span style="font-size: 2rem;">🧮</span>
+                <h4 style="color: var(--bank-primary); margin-top: 8px;">Simulacao de Financiamento</h4>
+                <p style="font-size: 0.85rem; color: #666;">Este cliente nao possui propostas pre-aprovadas, mas pode simular um novo emprestimo.</p>
+              </div>
+              <div style="background: #f8f8f8; border-radius: 12px; padding: 14px; margin-bottom: 12px;">
+                <div style="font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px;">Margem Consignavel (35%)</div>
+                <div style="font-weight: 700; font-size: 1.1rem; color: var(--bank-success);">R$ ${sim.margem_consignavel_35.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div style="background: #f8f8f8; border-radius: 8px; padding: 10px;">
+                  <div style="font-size: 0.7rem; color: #666;">Taxa Mensal</div>
+                  <div style="font-weight: 600;">${sim.taxa_mensal}% a.m.</div>
+                </div>
+                <div style="background: #f8f8f8; border-radius: 8px; padding: 10px;">
+                  <div style="font-size: 0.7rem; color: #666;">Taxa Anual</div>
+                  <div style="font-weight: 600;">${sim.taxa_anual}% a.a.</div>
+                </div>
+                <div style="background: #f8f8f8; border-radius: 8px; padding: 10px;">
+                  <div style="font-size: 0.7rem; color: #666;">CET Mensal</div>
+                  <div style="font-weight: 600;">${sim.cet_mensal}% a.m.</div>
+                </div>
+                <div style="background: #f8f8f8; border-radius: 8px; padding: 10px;">
+                  <div style="font-size: 0.7rem; color: #666;">CET Anual</div>
+                  <div style="font-weight: 600;">${sim.cet_anual}% a.a.</div>
+                </div>
+                <div style="background: #f8f8f8; border-radius: 8px; padding: 10px;">
+                  <div style="font-size: 0.7rem; color: #666;">Prazo Maximo</div>
+                  <div style="font-weight: 600;">${sim.prazo_maximo_meses} meses</div>
+                </div>
+                <div style="background: #f8f8f8; border-radius: 8px; padding: 10px;">
+                  <div style="font-size: 0.7rem; color: #666;">Sistema</div>
+                  <div style="font-weight: 600;">${sim.sistema_amortizacao}</div>
+                </div>
+              </div>
+              <div style="margin-top: 14px; background: #e8f5e9; border-radius: 8px; padding: 12px; font-size: 0.85rem; color: #2e7d32;">
+                💡 Peca a Sara para simular um valor e prazo!
+              </div>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div style="color: #888; text-align: center; padding: 20px;">
+              📄 Nenhuma movimentacao encontrada
+            </div>
+          `;
+        }
+      } catch {
+        container.innerHTML = `
+          <div style="color: #888; text-align: center; padding: 20px;">
+            📄 Nenhuma movimentacao encontrada
+          </div>
+        `;
+      }
     }
   } catch (error) {
     console.error('Error loading transactions:', error);
