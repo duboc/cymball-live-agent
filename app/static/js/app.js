@@ -38,7 +38,7 @@ function connectWebsocket() {
   websocket.onopen = function () {
     // Connection opened messages
     console.log("WebSocket connection opened.");
-    connectionStatus.textContent = "Conectado";
+    connectionStatus.textContent = window.bankConfig?.ui_text?.chat_status_connected || "Conectado";
     statusDot.classList.add("connected");
 
     // Enable the Send button ONLY if audio mode is active
@@ -368,7 +368,7 @@ stopAudioButton.addEventListener("click", () => {
   stopAudioButton.style.display = "none";
   startAudioButton.style.display = "inline-block";
   startAudioButton.disabled = false;
-  startAudioButton.textContent = "🎤 Activar Voz";
+  startAudioButton.textContent = "🎤 Ativar Voz";
   recordingContainer.style.display = "none";
 
   // Disable the Send button when voice is deactivated
@@ -541,27 +541,61 @@ async function loadClientContext(clienteId) {
       const c = data.cliente;
       
       // Update context panel
-      document.getElementById('ctx-nombre').textContent = c.nombre || 'N/A';
-      document.getElementById('ctx-tempo').textContent = c.tiempo_cliente || 'N/A';
-      
+      document.getElementById('ctx-nombre').textContent = c.nome || c.nombre || 'N/A';
+      document.getElementById('ctx-tempo').textContent = c.tempo_cliente || c.tiempo_cliente || 'N/A';
+
       // Update CPF
-      const cpfEl = document.getElementById('ctx-dui');
+      const cpfEl = document.getElementById('ctx-dni');
       if (cpfEl) {
-        cpfEl.textContent = c.dui || 'N/A';
+        cpfEl.textContent = c.cpf || c.dni || 'N/A';
       }
-      
-      // Calculate available limit
-      const limiteDisponivel = (c.limite_credito || 0) - (c.limite_usado || 0);
-      document.getElementById('ctx-limite').textContent = `${limiteDisponivel.toLocaleString('es-SV', {minimumFractionDigits: 2})}`;
-      
+
+      // Update profile tags
+      const perfilTag = document.getElementById('ctx-perfil-tag');
+      if (perfilTag) perfilTag.textContent = c.vinculo || c.perfil || 'Cliente';
+      const deviceTag = document.getElementById('ctx-device');
+      if (deviceTag) deviceTag.textContent = c.tipo_tarjeta || 'N/A';
+
+      // Calculate available limit / total pre-approved value
+      const limiteEl = document.getElementById('ctx-limite');
+      const limiteDisponivel = c.valor_total_pre_aprovado || ((c.limite_credito || 0) - (c.limite_usado || 0));
+      if (limiteDisponivel > 0) {
+        limiteEl.textContent = `R$ ${limiteDisponivel.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        limiteEl.style.color = 'var(--bank-success)';
+      } else if (c.margem_disponivel) {
+        limiteEl.textContent = `Margem: R$ ${c.margem_disponivel.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        limiteEl.style.color = 'var(--bank-warning)';
+      } else {
+        limiteEl.textContent = 'R$ 0,00';
+        limiteEl.style.color = 'var(--bank-success)';
+      }
+
+      // Update proposals count
+      const propostas = c.propostas_pre_aprovadas ? Object.keys(c.propostas_pre_aprovadas).length : 0;
+      const faturaEl = document.getElementById('ctx-pago-minimo');
+      const faturaStatusEl = document.getElementById('ctx-pago-minimo-status');
+      if (faturaEl) {
+        if (propostas > 0) {
+          faturaEl.textContent = `${propostas} proposta${propostas !== 1 ? 's' : ''}`;
+          faturaEl.style.color = 'var(--bank-primary)';
+        } else {
+          faturaEl.textContent = 'Simulacao disponivel';
+          faturaEl.style.color = 'var(--bank-warning)';
+        }
+      }
+      if (faturaStatusEl) {
+        if (propostas > 0) {
+          faturaStatusEl.textContent = 'Pre-aprovada' + (propostas !== 1 ? 's' : '');
+        } else {
+          faturaStatusEl.textContent = c.simulacao ? 'Margem: R$ ' + c.margem_disponivel?.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : 'Sem propostas';
+        }
+      }
+
       // Update card status with color
       const statusEl = document.getElementById('ctx-tarjeta-status');
-      statusEl.textContent = c.tarjeta_status === 'activa' ? 'Activa ✅' : 
-                              c.tarjeta_status === 'bloqueada' ? 'Bloqueada 🔐' : c.tarjeta_status;
-      statusEl.style.color = c.tarjeta_status === 'activa' ? 'var(--cymball-success)' : 'var(--cymball-error)';
-      
-      // Load invoice info
-      loadFaturaContext(clienteId);
+      statusEl.textContent = c.tarjeta_status === 'ativo' ? 'Ativo ✅' :
+                              c.tarjeta_status === 'bloqueado' ? 'Bloqueado 🔐' : c.tarjeta_status;
+      statusEl.style.color = c.tarjeta_status === 'ativo' ? 'var(--bank-success)' : 'var(--bank-error)';
     }
   } catch (error) {
     console.error('Error loading client context:', error);
@@ -576,15 +610,16 @@ async function loadFaturaContext(clienteId) {
     const faturaEl = document.getElementById('ctx-pago-minimo');
     const statusEl = document.getElementById('ctx-pago-minimo-status');
     
-    if (data.estado_cuenta) {
-      faturaEl.textContent = `$${data.estado_cuenta.pago_minimo.toLocaleString('es-SV', {minimumFractionDigits: 2})}`;
-      faturaEl.style.color = data.estado_cuenta.status === 'en_mora' ? 'var(--cymball-error)' : 'var(--cymball-blue)';
-      statusEl.textContent = data.estado_cuenta.status === 'en_mora' ? 
-        `⚠️ ${data.estado_cuenta.dias_mora} días de atraso` : 'Al día';
+    if (data.estado_cuenta && data.estado_cuenta.pago_minimo) {
+      faturaEl.textContent = `R$ ${data.estado_cuenta.pago_minimo.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+      faturaEl.style.color = data.estado_cuenta.status === 'en_mora' ? 'var(--bank-error)' : 'var(--bank-primary)';
+      statusEl.textContent = data.estado_cuenta.status === 'en_mora' ?
+        `⚠️ ${data.estado_cuenta.dias_mora} dias de atraso` : 'Em dia';
     } else {
-      faturaEl.textContent = '$0.00';
-      faturaEl.style.color = 'var(--cymball-success)';
-      statusEl.textContent = 'Sin estado de cuenta pendiente';
+      // For proposal-based scenarios, show proposal count
+      faturaEl.textContent = '4 propostas';
+      faturaEl.style.color = 'var(--bank-primary)';
+      statusEl.textContent = 'Pre-aprovadas';
     }
   } catch (error) {
     console.error('Error loading invoice context:', error);
@@ -609,70 +644,70 @@ async function loadTransactions(clienteId) {
         new Date(b.fecha) - new Date(a.fecha)
       );
       
-      sorted.forEach((txn, index) => {
+      sorted.forEach((txn) => {
         const item = document.createElement('div');
         item.className = 'txn-item';
-        
-        // Determine styling based on status
+
+        // Proposal-specific rendering
+        const isProposal = txn.categoria === 'proposta_pre_aprovada';
+        const typeIcons = {
+          'emprestimo_consignado': '💰',
+          'credito_pessoal': '💳',
+          'portabilidade': '🔄',
+          'refinanciamento': '📊'
+        };
+        const icon = isProposal ? (typeIcons[txn.tipo] || '📄') : (txn.icone || '');
+
+        // Status styling
         let statusStyle = '';
-        let statusIcon = '';
-        let amountColor = '';
-        
-        if (txn.status === 'rechazada' || txn.status === 'bloqueada') {
-          statusStyle = 'border-left: 3px solid var(--cymball-error); padding-left: 10px; background: #fff5f5;';
-          statusIcon = '🔐 ';
-          amountColor = 'color: var(--cymball-error);';
-        } else if (txn.status === 'en_disputa') {
-          statusStyle = 'border-left: 3px solid var(--cymball-warning); padding-left: 10px; background: #fffbf0;';
-          statusIcon = '⚠️ ';
-          amountColor = 'color: var(--cymball-warning);';
-        } else if (index > 0) {
-          statusStyle = 'opacity: 0.7;';
+        let statusBadge = '';
+        let amountColor = 'color: var(--bank-success); font-weight: 700;';
+
+        if (txn.status === 'pre_aprovada') {
+          statusStyle = 'border-left: 3px solid var(--bank-success); padding-left: 10px; background: #f0faf4;';
+          statusBadge = '<span style="font-size: 0.65rem; background: var(--bank-success); color: white; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">PRE-APROVADA</span>';
+        } else if (txn.status === 'contratada') {
+          statusStyle = 'border-left: 3px solid var(--bank-primary); padding-left: 10px; background: #e8f5e9;';
+          statusBadge = '<span style="font-size: 0.65rem; background: var(--bank-primary); color: white; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">CONTRATADA</span>';
+        } else if (txn.status === 'rechazada' || txn.status === 'bloqueada') {
+          statusStyle = 'border-left: 3px solid var(--bank-error); padding-left: 10px; background: #fff5f5;';
+          amountColor = 'color: var(--bank-error);';
         }
-        
-        // Add icon if transaction has one (e.g., pet transactions)
-        const icon = txn.icone || '';
-        
-        // Format date
-        const date = new Date(txn.fecha);
-        const today = new Date();
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-        
-        let dateStr;
-        if (date.toDateString() === today.toDateString()) {
-          dateStr = `Hoy, ${date.toLocaleTimeString('es-SV', {hour: '2-digit', minute: '2-digit'})}`;
-        } else if (date.toDateString() === yesterday.toDateString()) {
-          dateStr = `Ayer, ${date.toLocaleTimeString('es-SV', {hour: '2-digit', minute: '2-digit'})}`;
-        } else {
-          dateStr = date.toLocaleDateString('es-SV', {day: '2-digit', month: 'short'});
-        }
-        
+
+        // Format value display
+        const valorDisplay = txn.valor > 0
+          ? `R$ ${txn.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+          : 'Sem valor liberado';
+        const valorColor = txn.valor > 0 ? amountColor : 'color: #999; font-size: 0.8rem;';
+
+        // Proposal name (clean up "Proposta XXXXX - " prefix for cleaner display)
+        const displayName = txn.nombre_comercio.replace(/^Proposta \d+ - /, '');
+
         item.style.cssText = statusStyle;
         item.innerHTML = `
-          <div class="txn-info">
-            <h4>${statusIcon}${icon} ${txn.nombre_comercio}</h4>
-            <div class="txn-date" style="font-size: 0.8rem; color: #888;">${dateStr}</div>
+          <div class="txn-info" style="flex: 1;">
+            <h4 style="display: flex; align-items: center; flex-wrap: wrap;">${icon} ${displayName}${statusBadge}</h4>
+            <div style="font-size: 0.75rem; color: #888; margin-top: 2px;">N. ${txn.nombre_comercio.match(/\d{9}/)?.[0] || ''}</div>
           </div>
-          <div class="txn-amount" style="font-weight: 600; ${amountColor}">
-            ${txn.valor.toLocaleString('es-SV', {minimumFractionDigits: 2})}
+          <div style="text-align: right; ${valorColor}">
+            ${valorDisplay}
           </div>
         `;
-        
+
         container.appendChild(item);
       });
     } else {
       container.innerHTML = `
         <div style="color: #888; text-align: center; padding: 20px;">
-          📄 No se encontraron transacciones
+          📄 Nenhuma movimentacao encontrada
         </div>
       `;
     }
   } catch (error) {
     console.error('Error loading transactions:', error);
     container.innerHTML = `
-      <div style="color: var(--cymball-error); text-align: center; padding: 20px;">
-        ❌ Error al cargar transacciones
+      <div style="color: var(--bank-error); text-align: center; padding: 20px;">
+        ❌ Erro ao carregar movimentacoes
       </div>
     `;
   }
@@ -694,10 +729,11 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Sync journey tabs with scenario selector
       const journeyMap = {
-        'roberto_garcia_001': 'roberto',
-        'carolina_martinez_002': 'carolina',
-        'javier_fernandez_003': 'javier',
-        'maria_elena_lopez_004': 'maria_elena'
+        'maria_santos_001': 'maria',
+        'jose_carlos_002': 'jose',
+        'ana_beatriz_003': 'ana',
+        'roberto_lima_004': 'roberto',
+        'francisca_oliveira_005': 'francisca'
       };
       if (typeof window.showJourney === 'function' && journeyMap[clienteId]) {
         window.showJourney(journeyMap[clienteId]);
@@ -715,7 +751,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const toolLogs = document.getElementById('tool-logs');
       toolLogs.innerHTML = `
         <div style="color: #888; text-align: center; padding: 20px;">
-          🔧 Las llamadas de herramientas aparecerán aquí...
+          🔧 As chamadas de ferramentas aparecerao aqui...
         </div>
       `;
       

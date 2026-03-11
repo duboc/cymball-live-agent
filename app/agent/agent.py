@@ -15,19 +15,14 @@ try:
     from .tools.tools import (
         identificar_cliente_tool,
         consultar_historial_cliente_tool,
-        consultar_mora_tool,
-        registrar_pago_prometido_tool,
-        consultar_beneficios_tarjeta_tool,
-        consultar_puntos_tool,
-        consultar_disponible_tool,
-        validar_identidad_tool,
-        autorizar_transaccion_tool,
-        registrar_aviso_viaje_tool,
+        listar_propostas_tool,
+        detalhar_proposta_tool,
+        remover_proposta_tool,
+        contratar_propostas_tool,
+        consultar_valor_total_tool,
         buscar_transacciones_recientes_tool,
-        bloquear_tarjeta_tool,
-        registrar_reclamacion_tool,
-        solicitar_reposicion_tool,
-        consultar_transaccion_tool
+        consultar_transaccion_tool,
+        simular_emprestimo_tool,
     )
 except ImportError:
     from config import BANK_NAME, AGENT_DESCRIPTION
@@ -35,19 +30,14 @@ except ImportError:
     from agent.tools.tools import (
         identificar_cliente_tool,
         consultar_historial_cliente_tool,
-        consultar_mora_tool,
-        registrar_pago_prometido_tool,
-        consultar_beneficios_tarjeta_tool,
-        consultar_puntos_tool,
-        consultar_disponible_tool,
-        validar_identidad_tool,
-        autorizar_transaccion_tool,
-        registrar_aviso_viaje_tool,
+        listar_propostas_tool,
+        detalhar_proposta_tool,
+        remover_proposta_tool,
+        contratar_propostas_tool,
+        consultar_valor_total_tool,
         buscar_transacciones_recientes_tool,
-        bloquear_tarjeta_tool,
-        registrar_reclamacion_tool,
-        solicitar_reposicion_tool,
-        consultar_transaccion_tool
+        consultar_transaccion_tool,
+        simular_emprestimo_tool,
     )
 
 logger = logging.getLogger(__name__)
@@ -63,19 +53,14 @@ root_agent = Agent(
     tools=[
         identificar_cliente_tool,
         consultar_historial_cliente_tool,
-        consultar_mora_tool,
-        registrar_pago_prometido_tool,
-        consultar_beneficios_tarjeta_tool,
-        consultar_puntos_tool,
-        consultar_disponible_tool,
-        validar_identidad_tool,
-        autorizar_transaccion_tool,
-        registrar_aviso_viaje_tool,
+        listar_propostas_tool,
+        detalhar_proposta_tool,
+        remover_proposta_tool,
+        contratar_propostas_tool,
+        consultar_valor_total_tool,
         buscar_transacciones_recientes_tool,
-        bloquear_tarjeta_tool,
-        registrar_reclamacion_tool,
-        solicitar_reposicion_tool,
-        consultar_transaccion_tool
+        consultar_transaccion_tool,
+        simular_emprestimo_tool,
     ],
 )
 

@@ -1,184 +1,141 @@
 """
-Bank Agent Configuration
-========================
+ConsigPro Financeira - Agent Configuration
+============================================
 
-This is the ONLY file you need to edit to customize this template for a new bank.
-All bank-specific values are centralized here.
-
-Instructions:
-1. Copy this file or edit it directly
-2. Change the values below to match your bank's requirements
-3. Restart the application
-
-For detailed documentation, see CUSTOMIZATION.md
+This is the ONLY file you need to edit to customize this template.
+All specific values are centralized here.
 """
 
 # =============================================================================
-# BANK IDENTITY
+# COMPANY IDENTITY
 # =============================================================================
 
-BANK_NAME = "Cymball Bank"
-BANK_COUNTRY = "España"
-BANK_LANGUAGE = "es"  # es = Spanish, en = English, pt = Portuguese
-BANK_CURRENCY = "EUR"
-BANK_CURRENCY_SYMBOL = "€"
+BANK_NAME = "ConsigPro Financeira"
+BANK_COUNTRY = "Brasil"
+BANK_LANGUAGE = "pt"
+BANK_CURRENCY = "BRL"
+BANK_CURRENCY_SYMBOL = "R$"
 
-# Document types used for identification (localized)
-BANK_ID_DOCUMENT = "DNI"  # DNI (Spain), CPF (Brazil), ID Card, Passport, etc.
-BANK_ID_DOCUMENT_FULL = "Documento Nacional de Identidad"
+BANK_ID_DOCUMENT = "CPF"
+BANK_ID_DOCUMENT_FULL = "Cadastro de Pessoa Fisica"
 
 # =============================================================================
 # AGENT PERSONA
 # =============================================================================
 
-AGENT_NAME = "Laura"
-AGENT_DESCRIPTION = f"Agente de Servicio al Cliente - {BANK_NAME}, {BANK_COUNTRY}"
+AGENT_NAME = "Sara"
+AGENT_DESCRIPTION = f"Consultora Financeira - {BANK_NAME}, {BANK_COUNTRY}"
 
-# Voice configuration for Gemini Live
-# Available voices: Puck, Charon, Kore, Fenrir, Aoede, Leda, Orus, Zephyr
-AGENT_VOICE = "Leda"  # Leda is good for Spanish
+AGENT_VOICE = "Aoede"
 
 # =============================================================================
 # BRAND COLORS
 # =============================================================================
 
 BRAND_COLORS = {
-    "primary": "#0066CC",       # Main brand color
-    "primary_dark": "#004C99",  # Darker shade
-    "primary_light": "#3399FF", # Lighter shade
-    "success": "#00A86B",       # Success/positive actions
-    "warning": "#FFB800",       # Warnings
-    "error": "#FF4444",         # Errors/negative actions
-    "text": "#191919",          # Main text color
-    "background": "#EFEFEF",    # Page background
-    "card_background": "#FFFFFF", # Card/panel background
+    "primary": "#0D7C3D",
+    "primary_dark": "#095C2C",
+    "primary_light": "#2EAD5E",
+    "success": "#00A86B",
+    "warning": "#FFB800",
+    "error": "#FF4444",
+    "text": "#191919",
+    "background": "#EFEFEF",
+    "card_background": "#FFFFFF",
 }
 
 # =============================================================================
-# CARD TYPES & BENEFITS
+# PRODUCTS
 # =============================================================================
 
 CARD_TYPES = {
-    "visa_clasica": {
-        "nombre": "Visa Clásica",
-        "puntos_por_euro": 0,
-        "pago_aplazado": True,
-        "comercios_pago_aplazado": ["El Corte Inglés", "MediaMarkt", "Fnac", "Decathlon"],
-        "plazos_pago_aplazado": [3, 6, 12],
-        "seguro_viaje": False,
-        "acceso_salas_vip": False
+    "emprestimo_consignado": {
+        "nome": "Emprestimo Consignado INSS",
+        "descricao": "Credito com desconto direto no beneficio INSS",
     },
-    "visa_premium": {
-        "nombre": "Visa Premium",
-        "puntos_por_euro": 1,
-        "pago_aplazado": True,
-        "comercios_pago_aplazado": ["El Corte Inglés", "MediaMarkt", "Fnac", "Decathlon"],
-        "plazos_pago_aplazado": [3, 6, 12],
-        "pago_aplazado_genera_puntos": False,
-        "compras_normales_generan_puntos": True,
-        "seguro_viaje": True,
-        "acceso_salas_vip": False,
-        "nota": "Las compras con Pago Aplazado NO acumulan puntos. Solo compras de contado acumulan 1 punto por euro."
+    "credito_pessoal": {
+        "nome": "Credito Pessoal",
+        "descricao": "Credito pessoal com parcelas fixas",
+        "requisitos": "Portabilidade do beneficio para a ConsigPro Financeira",
     },
-    "visa_platinum": {
-        "nombre": "Visa Platinum",
-        "puntos_por_euro": 1.5,
-        "pago_aplazado": True,
-        "comercios_pago_aplazado": ["El Corte Inglés", "MediaMarkt", "Fnac", "Decathlon", "Leroy Merlin"],
-        "plazos_pago_aplazado": [3, 6, 12, 18],
-        "seguro_viaje": True,
-        "acceso_salas_vip": True,
-        "asistencia_internacional": True
+    "portabilidade": {
+        "nome": "Portabilidade",
+        "descricao": "Transferencia de contrato de outro banco com melhores condicoes",
     },
-    "mastercard_oro": {
-        "nombre": "Mastercard Oro",
-        "puntos_por_euro": 0,
-        "pago_aplazado": True,
-        "comercios_pago_aplazado": ["El Corte Inglés", "MediaMarkt", "Fnac"],
-        "plazos_pago_aplazado": [3, 6, 12],
-        "seguro_viaje": True,
-        "acceso_salas_vip": False
-    }
+    "refinanciamento": {
+        "nome": "Refinanciamento",
+        "descricao": "Renegociacao de contrato existente com liberacao de valor adicional",
+    },
 }
 
 # =============================================================================
-# SCENARIOS (Customer Journeys)
+# SCENARIOS
 # =============================================================================
-# Define the test scenarios/journeys available in the UI
 
 SCENARIOS = {
-    "roberto_garcia_001": {
-        "name": "Cobros (Mora Temprana)",
-        "description": "Cliente con pago atrasado"
+    "maria_santos_001": {
+        "name": "Emprestimo Consignado",
+        "description": "Aposentada quer contratar emprestimo consignado direto",
     },
-    "carolina_martinez_002": {
-        "name": "Beneficios (Puntos/Pago Aplazado)",
-        "description": "Consulta sobre beneficios de tarjeta"
+    "jose_carlos_002": {
+        "name": "Portabilidade + Credito",
+        "description": "Aposentado quer portabilidade e credito pessoal (combo com requisitos)",
     },
-    "javier_fernandez_003": {
-        "name": "Seguridad (Viaje)",
-        "description": "Tarjeta bloqueada en el extranjero"
+    "ana_beatriz_003": {
+        "name": "Refinanciamento",
+        "description": "Pensionista quer refinanciar para aliviar parcela mensal",
     },
-    "maria_elena_lopez_004": {
-        "name": "Reclamación (Cargo no reconocido)",
-        "description": "Disputa de cargo fraudulento"
-    }
+    "roberto_lima_004": {
+        "name": "Pacote Completo",
+        "description": "Aposentado com 4 propostas, quer entender tudo e escolher",
+    },
+    "francisca_oliveira_005": {
+        "name": "Simulacao de Financiamento",
+        "description": "Aposentada quer simular um novo emprestimo consignado (sem proposta pre-aprovada)",
+    },
 }
 
 # =============================================================================
-# UI TEXT (Localization)
+# UI TEXT
 # =============================================================================
 
 UI_TEXT = {
-    # Header
-    "app_title": f"{BANK_NAME} - Servicio al Cliente IA",
-    "context_header": "Contexto Cliente",
+    "app_title": f"{BANK_NAME} - Propostas Pre-Aprovadas",
+    "context_header": "Contexto do Cliente",
     "chat_status_connected": "Conectado",
     "chat_status_disconnected": "Desconectado",
-
-    # Left panel
-    "scenario_label": "Escenario de Prueba",
+    "scenario_label": "Cenario de Teste",
     "client_label": "Cliente",
-    "available_limit_label": "Límite Disponible",
-    "minimum_payment_label": "Pago Mínimo Pendiente",
-    "customer_since_label": "Tiempo como Cliente",
-    "card_status_label": "Estado Tarjeta",
-
-    # Chat
-    "typing_indicator": "El agente está escribiendo...",
-    "input_placeholder": "Escriba su mensaje...",
+    "available_limit_label": "Valor Pre-Aprovado",
+    "minimum_payment_label": "Propostas",
+    "customer_since_label": "Tempo como Cliente",
+    "card_status_label": "Situacao",
+    "typing_indicator": "A consultora esta digitando...",
+    "input_placeholder": "Digite sua mensagem...",
     "send_button": "Enviar",
     "voice_button": "Voz",
     "stop_button": "Parar",
-    "recording_indicator": "Grabando...",
-
-    # Right panel
-    "transactions_tab": "Transacciones",
+    "recording_indicator": "Gravando...",
+    "transactions_tab": "Propostas",
     "logs_tab": "Logs",
-    "loading_transactions": "Cargando transacciones...",
-    "tool_logs_placeholder": "Las llamadas de herramientas aparecerán aquí...",
-
-    # Help modal
-    "help_title": "Cómo Probar los Escenarios",
-    "help_step1": "Identificarse",
-    "help_step2": "Describa el Problema",
-    "help_step3": "Interactúe",
-    "voice_tip": "Use el modo voz para una experiencia más realista.",
+    "loading_transactions": "Carregando propostas...",
+    "tool_logs_placeholder": "As chamadas de ferramentas aparecerao aqui...",
+    "help_title": "Como Testar os Cenarios",
+    "help_step1": "Identificar-se",
+    "help_step2": "Pergunte sobre as propostas",
+    "help_step3": "Interaja",
+    "voice_tip": "Use o modo voz para uma experiencia mais realista.",
 }
 
 # =============================================================================
 # OPERATIONAL SETTINGS
 # =============================================================================
 
-# Timeframes for operations (localized text)
 TIMEFRAMES = {
-    "card_replacement": "3 a 5 días hábiles",
-    "claim_resolution": "30 a 45 días hábiles",
-    "transaction_retry": "2 minutos",
+    "proposta_aprovacao": "ate 24 horas uteis",
+    "portabilidade_prazo": "5 a 10 dias uteis",
+    "cartao_entrega": "7 a 10 dias uteis",
 }
 
-# Payment channels available
-PAYMENT_CHANNELS = ["App", "Banca online", "Sucursal"]
-
-# Card delivery options
-DELIVERY_OPTIONS = ["domicilio", "oficina", "sucursal"]
+PAYMENT_CHANNELS = ["App", "Internet Banking", "Agencia"]
+DELIVERY_OPTIONS = ["domicilio", "agencia"]

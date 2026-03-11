@@ -1,8 +1,8 @@
 """
-Banking Agent Server
-====================
+Consignado Agent Server
+========================
 
-FastAPI server that serves the banking agent UI and handles WebSocket
+FastAPI server that serves the consignado agent UI and handles WebSocket
 communication with Google's Gemini Live API.
 
 Configuration is loaded from config.py.
@@ -93,7 +93,6 @@ async def start_agent_session(session_id, is_audio=False):
     is_native_audio = "native-audio" in model_name.lower()
 
     # Native audio models ONLY support AUDIO output modality
-    # Half-cascade models (like gemini-live-2.5-flash-preview) support both TEXT and AUDIO
     if is_native_audio:
         modality = "AUDIO"
         logger.info(f"Native audio model detected: {model_name}, forcing AUDIO modality")
@@ -103,7 +102,6 @@ async def start_agent_session(session_id, is_audio=False):
     # Create speech config with voice settings from config
     speech_config = types.SpeechConfig(
         voice_config=types.VoiceConfig(
-            # Available voices: Puck, Charon, Kore, Fenrir, Aoede, Leda, Orus, Zephyr
             prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=AGENT_VOICE)
         )
     )
@@ -114,13 +112,10 @@ async def start_agent_session(session_id, is_audio=False):
     # Add audio transcription when using audio mode or native audio model
     if is_audio or is_native_audio:
         config["speech_config"] = speech_config
-        # Enable input transcription for speech-to-text
         config["input_audio_transcription"] = types.AudioTranscriptionConfig()
-        # Enable output transcription to get text version of audio response
         config["output_audio_transcription"] = types.AudioTranscriptionConfig()
         logger.debug("Audio transcription enabled (input and output)")
     else:
-        # Disable VAD for text-only sessions to avoid "Cannot extract voices" error
         config["realtime_input_config"] = {
             "automatic_activity_detection": {"disabled": True}
         }
@@ -158,8 +153,7 @@ async def agent_to_client_messaging(
             logger.debug(f"[AGENT TO CLIENT]: {message}")
             continue
 
-        # Handle transcription events (input and output)
-        # Transcription attributes are directly on the event object
+        # Handle transcription events
         transcription_sent = False
 
         # Input transcription (user's speech -> text)
@@ -168,7 +162,6 @@ async def agent_to_client_messaging(
             text = getattr(transcription, 'text', None)
             finished = getattr(transcription, 'finished', False)
             logger.debug(f"[TRANSCRIPTION DEBUG] input: text={text}, finished={finished}")
-            # Send ALL transcriptions (not just finished) - frontend handles replacement
             if text and text.strip():
                 message = {
                     "type": "input_transcription",
@@ -186,7 +179,6 @@ async def agent_to_client_messaging(
             text = getattr(transcription, 'text', None)
             finished = getattr(transcription, 'finished', False)
             logger.debug(f"[TRANSCRIPTION DEBUG] output: text={text}, finished={finished}")
-            # Send ALL transcriptions (not just finished) - frontend handles replacement
             if text and text.strip():
                 message = {
                     "type": "output_transcription",
@@ -208,8 +200,6 @@ async def agent_to_client_messaging(
             continue
 
         # Only send text if it's a partial response (streaming)
-        # Skip text/plain if we already sent transcription for this event
-        # to avoid duplication
         if part.text and event.partial and not transcription_sent:
             message = {
                 "mime_type": "text/plain",
@@ -259,26 +249,19 @@ async def client_to_agent_messaging(
         message = json.loads(message_json)
         mime_type = message["mime_type"]
         data = message["data"]
-        role = message.get("role", "user")  # Default to 'user' if role is not provided
+        role = message.get("role", "user")
 
         # Send the message to the agent
         if mime_type == "text/plain":
-            # Send a text message
             content = types.Content(role=role, parts=[types.Part.from_text(text=data)])
             live_request_queue.send_content(content=content)
             logger.debug(f"[CLIENT TO AGENT]: {data}")
         elif mime_type == "audio/pcm":
-            # Send audio data
             decoded_data = base64.b64decode(data)
-
-            # Send the audio data - note that ActivityStart/End and transcription
-            # handling is done automatically by the ADK when input_audio_transcription
-            # is enabled in the config
             live_request_queue.send_realtime(
                 types.Blob(data=decoded_data, mime_type=mime_type)
             )
             logger.debug(f"[CLIENT TO AGENT]: audio/pcm: {len(decoded_data)} bytes")
-
         else:
             raise ValueError(f"Mime type not supported: {mime_type}")
 
@@ -330,9 +313,9 @@ async def get_clientes():
     for cid, data in CLIENTES.items():
         clientes_resumen.append({
             "id": cid,
-            "nombre": data["nombre"],
+            "nombre": data["nome"],
             "perfil": data.get("perfil", "cliente"),
-            "tarjeta_status": data.get("tarjeta_status", "activa"),
+            "tarjeta_status": data.get("tarjeta_status", "ativo"),
             "escenario": _get_escenario_for_client(cid)
         })
     return {"clientes": clientes_resumen}
@@ -358,12 +341,12 @@ async def get_cliente(cliente_id: str):
         cliente["id"] = cliente_id
         cliente["escenario"] = _get_escenario_for_client(cliente_id)
         return {"success": True, "cliente": cliente}
-    return {"success": False, "error": "Cliente no encontrado"}
+    return {"success": False, "error": "Cliente não encontrado"}
 
 
 @app.get("/api/transacciones/{cliente_id}")
 async def get_transacciones(cliente_id: str):
-    """Returns transactions for a specific client"""
+    """Returns movements for a specific client"""
     try:
         from .agent.data.mock_data import TRANSACCIONES
     except ImportError:
@@ -391,7 +374,7 @@ async def get_estado_cuenta(cliente_id: str):
             estado = data.copy()
             estado["id"] = eid
             return {"success": True, "estado_cuenta": estado}
-    return {"success": True, "estado_cuenta": None, "status": "al_dia"}
+    return {"success": True, "estado_cuenta": None, "status": "em_dia"}
 
 
 @app.websocket("/ws/{session_id}")
@@ -427,7 +410,6 @@ async def websocket_endpoint(
     except Exception as e:
         logger.error(f"Unexpected error in streaming tasks for session {session_id}: {e}", exc_info=True)
     finally:
-        # Always close the queue, even if exceptions occurred
         logger.debug(f"Closing live_request_queue for session {session_id}")
         live_request_queue.close()
         logger.info(f"Client #{session_id} session ended")

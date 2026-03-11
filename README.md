@@ -1,16 +1,14 @@
-# Banking Agent Template
+# Consignado Agent - ConsigPro Financeira
 
-A customizable AI-powered customer service agent for banks, built with Google ADK (Agent Development Kit) and Gemini Live API with native audio support.
-
-**Easily adaptable** for different banks, languages, and regions by editing a single configuration file.
+An AI-powered customer service agent for payroll loans (crédito consignado), built with Google ADK (Agent Development Kit) and Gemini Live API with native audio support.
 
 ## Features
 
 - Voice and text conversation with customers
-- Multi-language support (Spanish, English, Portuguese)
-- Customizable branding (colors, bank name, agent persona)
-- 4 pre-built customer journey scenarios
-- 15 banking tools for common operations
+- Multi-language support (Portuguese, Spanish, English)
+- Customizable branding (colors, company name, agent persona)
+- 4 pre-built customer journey scenarios for consignado products
+- 14 tools for loan simulation, portability, refinancing, and card management
 - Real-time transcription for voice mode
 - Cloud Run deployment ready
 
@@ -49,60 +47,27 @@ Open http://localhost:8080 in your browser.
 ./deploy.sh
 ```
 
-## Customization
-
-To customize this template for your bank, edit **one file**:
-
-```
-app/config.py
-```
-
-### Example Configuration
-
-```python
-# Bank Identity
-BANK_NAME = "Your Bank Name"
-BANK_COUNTRY = "United States"
-BANK_LANGUAGE = "en"  # es, en, or pt
-BANK_CURRENCY = "USD"
-BANK_CURRENCY_SYMBOL = "$"
-
-# Agent Persona
-AGENT_NAME = "Sarah"
-AGENT_VOICE = "Kore"  # Gemini voice
-
-# Brand Colors
-BRAND_COLORS = {
-    "primary": "#1E40AF",
-    "primary_dark": "#1E3A8A",
-    ...
-}
-```
-
-For complete customization instructions, see **[CUSTOMIZATION.md](CUSTOMIZATION.md)**.
-
-For designing customer journeys and scenarios, see **[SCENARIOS.md](SCENARIOS.md)**.
-
 ## Customer Journey Scenarios
 
-| # | Scenario | Description |
-|---|----------|-------------|
-| 1 | Collections | Early delinquency - overdue minimum payment |
-| 2 | Benefits Inquiry | Points program and deferred payment options |
-| 3 | Travel Security | Card blocked abroad, travel notice registration |
-| 4 | Dispute/Claim | Unrecognized charge, fraud prevention |
+| # | Scenario | Client | Description |
+|---|----------|--------|-------------|
+| 1 | Loan Simulation | Joao Silva | Public servant wants to simulate a payroll loan |
+| 2 | Portability | Maria Oliveira | Retiree wants to transfer loan from another bank |
+| 3 | Refinancing | Carlos Santos | Federal servant wants to refinance to reduce payments |
+| 4 | Consignado Card | Ana Paula Costa | Pensioner with questions about consignado credit card |
 
 ## Agent Tools
 
-The agent has 15 tools for handling customer requests:
+The agent has 14 tools for handling customer requests:
 
 | Category | Tools |
 |----------|-------|
 | **General** | `identificar_cliente`, `consultar_historial_cliente` |
-| **Collections** | `consultar_mora`, `registrar_pago_prometido` |
-| **Benefits** | `consultar_beneficios_tarjeta`, `consultar_puntos`, `consultar_disponible` |
-| **Security** | `validar_identidad`, `autorizar_transaccion`, `registrar_aviso_viaje` |
-| **Disputes** | `buscar_transacciones_recientes`, `bloquear_tarjeta`, `registrar_reclamacion`, `solicitar_reposicion`, `consultar_transaccion` |
+| **Simulation** | `consultar_margem`, `simular_consignado`, `consultar_taxas_vigentes` |
+| **Portability** | `simular_portabilidade`, `registrar_proposta` |
+| **Refinancing** | `consultar_contratos`, `simular_refinanciamento` |
+| **Consignado Card** | `consultar_cartao_consignado`, `consultar_fatura_cartao`, `simular_saque_cartao` |
+| **History** | `buscar_transacciones_recientes`, `consultar_transaccion` |
 
 ## Project Structure
 
@@ -116,36 +81,39 @@ app/
 │   │   └── mock_data.py   # Sample customer data
 │   └── tools/
 │       ├── prompts.py     # Multi-language system prompts
-│       └── tools.py       # Banking tools
+│       └── tools.py       # Consignado tools
 └── static/
     ├── index.html         # UI with dynamic branding
     └── js/
         └── app.js         # Frontend logic
 ```
 
-## Language Support
+## Configuration
 
-| Language | Code | Voice |
-|----------|------|-------|
-| Spanish | `es` | Leda |
-| English | `en` | Kore |
-| Portuguese | `pt` | Aoede |
-
-Set the language in `config.py`:
+To customize, edit `app/config.py`:
 
 ```python
-BANK_LANGUAGE = "en"
+BANK_NAME = "ConsigPro Financeira"
+BANK_COUNTRY = "Brasil"
+BANK_LANGUAGE = "pt"
+BANK_CURRENCY = "BRL"
+BANK_CURRENCY_SYMBOL = "R$"
+AGENT_NAME = "Ana"
+AGENT_VOICE = "Aoede"
 ```
+
+For complete customization instructions, see **[CUSTOMIZATION.md](CUSTOMIZATION.md)**.
+
+For designing customer journeys and scenarios, see **[SCENARIOS.md](SCENARIOS.md)**.
 
 ## Voice Mode
 
 The agent supports voice conversations using `gemini-live-2.5-flash-native-audio`. Available voices:
 
+- **Aoede** - Clear articulation, good for Portuguese
 - **Leda** - Spanish, warm female voice
 - **Kore** - English, professional female voice
-- **Aoede** - Neutral, clear articulation
 - **Puck** - English, friendly male voice
-- **Charon**, **Fenrir**, **Orus**, **Zephyr** - Additional options
 
 ## API Endpoints
 
@@ -155,7 +123,7 @@ The agent supports voice conversations using `gemini-live-2.5-flash-native-audio
 | `GET /api/config` | Brand configuration |
 | `GET /api/clientes` | List of test customers |
 | `GET /api/cliente/{id}` | Customer details |
-| `GET /api/transacciones/{id}` | Customer transactions |
+| `GET /api/transacciones/{id}` | Customer movements |
 | `WS /ws/{session_id}` | WebSocket for chat/voice |
 
 ## Technology Stack

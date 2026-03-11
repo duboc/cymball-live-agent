@@ -1,341 +1,395 @@
 """
-Mock Data for Testing
-=====================
+Mock Data - ConsigPro Financeira - Propostas Pre-Aprovadas
+===========================================================
 
-This file contains sample customer and transaction data for testing the agent.
-Modify this data to match your bank's test scenarios.
-
-Note: BENEFICIOS_TARJETAS is imported from config.py (as CARD_TYPES).
+4 clients, each with different pre-approved proposals for distinct scenarios.
 """
 
-# Support both relative imports (when run as module) and absolute imports (when run directly)
 try:
     from ...config import CARD_TYPES
 except ImportError:
     from config import CARD_TYPES
 
-# Alias for backward compatibility
 BENEFICIOS_TARJETAS = CARD_TYPES
 
 # =============================================================================
-# CUSTOMERS (CLIENTES)
+# CUSTOMERS
 # =============================================================================
 
 CLIENTES = {
-    "roberto_garcia_001": {
-        "nombre": "Roberto García",
-        "tiempo_cliente": "3 años y 5 meses",
-        "dni": "12345678A",
-        "dni_ultimos_digitos": "78A",
-        "email": "roberto.g***@gmail.com",
-        "telefono": "+34 6** *** 890",
-        "perfil": "buen_pagador",
-        "tarjeta_terminacion": "4501",
-        "tipo_tarjeta": "Visa Clásica",
-        "limite_credito": 3000.00,
-        "limite_usado": 1200.00,
-        "saldo_pendiente": 150.00,
-        "pago_minimo": 150.00,
-        "fecha_limite_pago": "2026-01-25",
-        "dias_mora": 5,
-        "tarjeta_status": "activa",
-        "cuenta_ahorro": "ES91 2100 1234 5678 9012 3456",
-        "saldo_cuenta_ahorro": 850.00,
-        "ultima_interaccion": "2026-01-20"
+    # =========================================================================
+    # CENARIO 1: Maria Santos - Emprestimo Consignado (venda direta)
+    # =========================================================================
+    "maria_santos_001": {
+        "nome": "Maria Santos",
+        "tempo_cliente": "2 anos e 8 meses",
+        "dni": "111.222.333-44",
+        "dni_ultimos_digitos": "3-44",
+        "cpf": "111.222.333-44",
+        "cpf_ultimos_digitos": "3-44",
+        "email": "maria.s***@gmail.com",
+        "telefono": "+55 11 9**** 5678",
+        "perfil": "aposentada_inss",
+        "vinculo": "Aposentada INSS",
+        "beneficio_inss": "****3201",
+        "salario_bruto": 2800.00,
+        "banco_atual": {
+            "banco": "CAIXA ECONOMICA FEDERAL",
+            "codigo_banco": "104",
+            "agencia": "1234",
+            "conta": "****567-2",
+        },
+        "propostas_pre_aprovadas": {
+            "emprestimo_consignado": {
+                "numero_proposta": "570013160",
+                "tipo": "Emprestimo Consignado INSS",
+                "valor_liberado": 8500.00,
+                "parcelas": 84,
+                "valor_parcela": 198.45,
+                "status": "pre_aprovada",
+                "ativa": True,
+            },
+        },
+        "valor_total_pre_aprovado": 8500.00,
+        "tarjeta_terminacion": "N/A",
+        "tipo_tarjeta": "Emprestimo Consignado",
+        "limite_credito": 8500.00,
+        "limite_usado": 0.00,
+        "tarjeta_status": "ativo",
+        "ultima_interaccion": "2026-03-10",
+        "margem_total": 980.00,
+        "margem_disponivel": 8500.00,
+        "margem_cartao_disponivel": 0.00,
+        "contratos_ativos": 0,
     },
-    "carolina_martinez_002": {
-        "nombre": "Carolina Martínez",
-        "tiempo_cliente": "1 año y 2 meses",
-        "dni": "23456789B",
-        "dni_ultimos_digitos": "89B",
-        "email": "carolina.m***@hotmail.com",
-        "telefono": "+34 6** *** 654",
-        "perfil": "cliente_nuevo",
-        "tarjeta_terminacion": "8823",
-        "tipo_tarjeta": "Visa Premium",
-        "limite_credito": 5000.00,
-        "limite_usado": 800.00,
-        "saldo_pendiente": 0.00,
-        "pago_minimo": 0.00,
-        "fecha_limite_pago": "2026-02-10",
-        "dias_mora": 0,
-        "tarjeta_status": "activa",
-        "puntos_programa": 2350,
-        "puntos_por_caducar": 500,
-        "fecha_caducidad_puntos": "2026-06-30",
-        "ultima_interaccion": "2026-01-28",
-        "promociones_activas": ["Pago Aplazado El Corte Inglés", "Pago Aplazado MediaMarkt", "Pago Aplazado Fnac"]
+
+    # =========================================================================
+    # CENARIO 2: Jose Carlos - Portabilidade + Credito Pessoal
+    # =========================================================================
+    "jose_carlos_002": {
+        "nome": "Jose Carlos",
+        "tempo_cliente": "4 anos e 3 meses",
+        "dni": "234.567.890-11",
+        "dni_ultimos_digitos": "0-11",
+        "cpf": "234.567.890-11",
+        "cpf_ultimos_digitos": "0-11",
+        "email": "jose.c***@gmail.com",
+        "telefono": "+55 31 9**** 1234",
+        "perfil": "aposentado_inss",
+        "vinculo": "Aposentado INSS",
+        "beneficio_inss": "****6261",
+        "salario_bruto": 3200.00,
+        "banco_atual": {
+            "banco": "BANCO DO BRASIL",
+            "codigo_banco": "1",
+            "agencia": "1",
+            "conta": "****443-8",
+        },
+        "propostas_pre_aprovadas": {
+            "portabilidade": {
+                "numero_proposta": "570013155",
+                "tipo": "Portabilidade",
+                "valor_liberado": 0.00,
+                "parcelas": 38,
+                "valor_parcela": 299.30,
+                "status": "pre_aprovada",
+                "ativa": True,
+            },
+            "credito_pessoal": {
+                "numero_proposta": "570013153",
+                "tipo": "Credito Pessoal",
+                "valor_liberado": 1400.00,
+                "parcelas": 18,
+                "valor_parcela": 299.31,
+                "status": "pre_aprovada",
+                "ativa": True,
+                "requisitos": [
+                    "Portabilidade do beneficio para a ConsigPro Financeira",
+                    "Abertura de conta corrente na ConsigPro Financeira",
+                    "Cadastro de transferencia automatica para receber valores no banco atual",
+                ],
+            },
+        },
+        "valor_total_pre_aprovado": 1400.00,
+        "tarjeta_terminacion": "N/A",
+        "tipo_tarjeta": "Portabilidade + Credito",
+        "limite_credito": 1400.00,
+        "limite_usado": 0.00,
+        "tarjeta_status": "ativo",
+        "ultima_interaccion": "2026-03-10",
+        "margem_total": 1120.00,
+        "margem_disponivel": 1400.00,
+        "margem_cartao_disponivel": 0.00,
+        "contratos_ativos": 0,
     },
-    "javier_fernandez_003": {
-        "nombre": "Javier Fernández",
-        "tiempo_cliente": "5 años",
-        "dni": "34567890C",
-        "dni_ultimos_digitos": "90C",
-        "pasaporte": "AAA123456",
-        "email": "javier.f***@gmail.com",
-        "telefono": "+34 6** *** 123",
-        "perfil": "cliente_premium",
-        "tarjeta_terminacion": "7710",
-        "tipo_tarjeta": "Visa Platinum",
-        "tarjeta_debito_terminacion": "3344",
-        "limite_credito": 8000.00,
-        "limite_usado": 2500.00,
-        "saldo_pendiente": 0.00,
-        "pago_minimo": 0.00,
-        "tarjeta_status": "bloqueada_viaje",
-        "pais_actual": "Portugal",
-        "aviso_viaje": False,
-        "fecha_regreso": None,
-        "ultima_interaccion": "2026-01-30"
+
+    # =========================================================================
+    # CENARIO 3: Ana Beatriz - Refinanciamento (aliviar parcela)
+    # =========================================================================
+    "ana_beatriz_003": {
+        "nome": "Ana Beatriz",
+        "tempo_cliente": "5 anos e 1 mes",
+        "dni": "345.678.901-22",
+        "dni_ultimos_digitos": "1-22",
+        "cpf": "345.678.901-22",
+        "cpf_ultimos_digitos": "1-22",
+        "email": "ana.b***@hotmail.com",
+        "telefono": "+55 21 9**** 9012",
+        "perfil": "pensionista_inss",
+        "vinculo": "Pensionista INSS",
+        "beneficio_inss": "****8845",
+        "salario_bruto": 3800.00,
+        "banco_atual": {
+            "banco": "BRADESCO",
+            "codigo_banco": "237",
+            "agencia": "567",
+            "conta": "****890-1",
+        },
+        "propostas_pre_aprovadas": {
+            "refinanciamento": {
+                "numero_proposta": "570013170",
+                "tipo": "Refinanciamento",
+                "valor_liberado": 5124.79,
+                "parcelas": 84,
+                "valor_parcela": 299.30,
+                "status": "pre_aprovada",
+                "ativa": True,
+            },
+        },
+        "valor_total_pre_aprovado": 5124.79,
+        "tarjeta_terminacion": "N/A",
+        "tipo_tarjeta": "Refinanciamento",
+        "limite_credito": 5124.79,
+        "limite_usado": 0.00,
+        "tarjeta_status": "ativo",
+        "ultima_interaccion": "2026-03-10",
+        "margem_total": 1330.00,
+        "margem_disponivel": 5124.79,
+        "margem_cartao_disponivel": 0.00,
+        "contratos_ativos": 1,
+        "contrato_atual": {
+            "numero": "CSG-2024-004567",
+            "valor_emprestado": 18000.00,
+            "parcela_mensal": 450.00,
+            "parcelas_pagas": 12,
+            "parcelas_totais": 60,
+            "parcelas_restantes": 48,
+            "saldo_devedor": 14500.00,
+            "taxa_mensal": 2.10,
+        },
     },
-    "maria_elena_lopez_004": {
-        "nombre": "María Elena López",
-        "tiempo_cliente": "2 años y 8 meses",
-        "dni": "45678901D",
-        "dni_ultimos_digitos": "01D",
-        "email": "maria.e***@yahoo.es",
-        "telefono": "+34 6** *** 456",
-        "perfil": "buen_pagador",
-        "tarjeta_terminacion": "5590",
-        "tipo_tarjeta": "Mastercard Oro",
-        "limite_credito": 4000.00,
-        "limite_usado": 1500.00,
-        "saldo_pendiente": 0.00,
-        "pago_minimo": 0.00,
-        "tarjeta_status": "activa",
-        "suscripcion_netflix": 15.00,
-        "ultima_interaccion": "2026-01-29"
-    }
+
+    # =========================================================================
+    # CENARIO 4: Roberto Lima - Pacote Completo (4 propostas)
+    # =========================================================================
+    "roberto_lima_004": {
+        "nome": "Roberto Lima",
+        "tempo_cliente": "6 anos",
+        "dni": "456.789.012-33",
+        "dni_ultimos_digitos": "2-33",
+        "cpf": "456.789.012-33",
+        "cpf_ultimos_digitos": "2-33",
+        "email": "roberto.l***@yahoo.com.br",
+        "telefono": "+55 61 9**** 3456",
+        "perfil": "aposentado_inss",
+        "vinculo": "Aposentado INSS",
+        "beneficio_inss": "****4512",
+        "salario_bruto": 4500.00,
+        "banco_atual": {
+            "banco": "ITAU UNIBANCO",
+            "codigo_banco": "341",
+            "agencia": "8901",
+            "conta": "****234-5",
+        },
+        "propostas_pre_aprovadas": {
+            "emprestimo_consignado": {
+                "numero_proposta": "570013180",
+                "tipo": "Emprestimo Consignado INSS",
+                "valor_liberado": 6456.29,
+                "parcelas": 84,
+                "valor_parcela": 150.55,
+                "status": "pre_aprovada",
+                "ativa": True,
+            },
+            "credito_pessoal": {
+                "numero_proposta": "570013181",
+                "tipo": "Credito Pessoal",
+                "valor_liberado": 1400.00,
+                "parcelas": 18,
+                "valor_parcela": 299.31,
+                "status": "pre_aprovada",
+                "ativa": True,
+                "requisitos": [
+                    "Portabilidade do beneficio para a ConsigPro Financeira",
+                    "Abertura de conta corrente na ConsigPro Financeira",
+                    "Cadastro de transferencia automatica para receber valores no banco atual",
+                ],
+            },
+            "portabilidade": {
+                "numero_proposta": "570013182",
+                "tipo": "Portabilidade",
+                "valor_liberado": 0.00,
+                "parcelas": 38,
+                "valor_parcela": 299.30,
+                "status": "pre_aprovada",
+                "ativa": True,
+            },
+            "refinanciamento": {
+                "numero_proposta": "570013183",
+                "tipo": "Refinanciamento",
+                "valor_liberado": 5124.79,
+                "parcelas": 84,
+                "valor_parcela": 299.30,
+                "status": "pre_aprovada",
+                "ativa": True,
+            },
+        },
+        "valor_total_pre_aprovado": 12981.08,
+        "tarjeta_terminacion": "N/A",
+        "tipo_tarjeta": "Pacote Completo",
+        "limite_credito": 12981.08,
+        "limite_usado": 0.00,
+        "tarjeta_status": "ativo",
+        "ultima_interaccion": "2026-03-10",
+        "margem_total": 1575.00,
+        "margem_disponivel": 12981.08,
+        "margem_cartao_disponivel": 0.00,
+        "contratos_ativos": 0,
+    },
+
+    # =========================================================================
+    # CENARIO 5: Francisca Oliveira - Simulacao de Financiamento (sem proposta)
+    # =========================================================================
+    "francisca_oliveira_005": {
+        "nome": "Francisca Oliveira",
+        "tempo_cliente": "1 ano e 2 meses",
+        "dni": "567.890.123-44",
+        "dni_ultimos_digitos": "3-44",
+        "cpf": "567.890.123-44",
+        "cpf_ultimos_digitos": "3-44",
+        "email": "francisca.o***@gmail.com",
+        "telefono": "+55 85 9**** 7890",
+        "perfil": "aposentada_inss",
+        "vinculo": "Aposentada INSS",
+        "beneficio_inss": "****9102",
+        "salario_bruto": 3500.00,
+        "banco_atual": {
+            "banco": "BANCO DO NORDESTE",
+            "codigo_banco": "4",
+            "agencia": "456",
+            "conta": "****678-9",
+        },
+        "propostas_pre_aprovadas": {},
+        "valor_total_pre_aprovado": 0.00,
+        "tarjeta_terminacion": "N/A",
+        "tipo_tarjeta": "Simulacao",
+        "limite_credito": 0.00,
+        "limite_usado": 0.00,
+        "tarjeta_status": "ativo",
+        "ultima_interaccion": "2026-03-10",
+        "margem_total": 1225.00,
+        "margem_disponivel": 1225.00,
+        "margem_cartao_disponivel": 0.00,
+        "contratos_ativos": 0,
+        "simulacao": {
+            "margem_consignavel_35": 1225.00,
+            "taxa_mensal": 1.80,
+            "taxa_anual": 23.87,
+            "cet_mensal": 1.95,
+            "cet_anual": 26.08,
+            "iof_percentual": 0.38,
+            "iof_adicional_diario": 0.0082,
+            "prazo_maximo_meses": 84,
+            "sistema_amortizacao": "Tabela Price",
+        },
+    },
 }
+
+# =============================================================================
+# TRANSACCIONES (proposals shown in right panel)
+# =============================================================================
 
 TRANSACCIONES = {
-    # === ROBERTO GARCÍA - Cobros / Mora Temprana ===
-    "txn_roberto_001": {
-        "cliente_id": "roberto_garcia_001",
-        "valor": 85.00,
-        "nombre_comercio": "Mercadona",
-        "categoria": "supermercado",
-        "fecha": "2026-01-18T16:30:00",
-        "tipo": "presencial",
-        "status": "aprobada"
-    },
-    "txn_roberto_002": {
-        "cliente_id": "roberto_garcia_001",
-        "valor": 32.50,
-        "nombre_comercio": "Farmacia Ortega",
-        "categoria": "farmacia",
-        "fecha": "2026-01-15T10:15:00",
-        "tipo": "presencial",
-        "status": "aprobada"
-    },
-    "txn_roberto_003": {
-        "cliente_id": "roberto_garcia_001",
-        "valor": 45.00,
-        "nombre_comercio": "Repsol Gasolinera",
-        "categoria": "combustible",
-        "fecha": "2026-01-12T08:00:00",
-        "tipo": "presencial",
-        "status": "aprobada"
-    },
-    "txn_roberto_004": {
-        "cliente_id": "roberto_garcia_001",
-        "valor": 120.00,
-        "nombre_comercio": "El Corte Inglés",
-        "categoria": "tienda",
-        "fecha": "2026-01-10T14:20:00",
-        "tipo": "presencial",
-        "status": "aprobada"
-    },
-    "txn_roberto_005": {
-        "cliente_id": "roberto_garcia_001",
-        "valor": 15.00,
-        "nombre_comercio": "Netflix",
-        "categoria": "streaming",
-        "fecha": "2026-01-08T00:00:00",
-        "tipo": "online",
-        "status": "aprobada"
+    # Maria Santos
+    "prop_maria_001": {
+        "cliente_id": "maria_santos_001",
+        "valor": 8500.00,
+        "nombre_comercio": "Proposta 570013160 - Emprestimo Consignado INSS",
+        "categoria": "proposta_pre_aprovada",
+        "fecha": "2026-03-10T00:00:00",
+        "tipo": "emprestimo_consignado",
+        "status": "pre_aprovada",
     },
 
-    # === CAROLINA MARTÍNEZ - Beneficios / Puntos / Pago Aplazado ===
-    "txn_carolina_001": {
-        "cliente_id": "carolina_martinez_002",
-        "valor": 125.00,
-        "nombre_comercio": "El Corte Inglés",
-        "categoria": "tienda",
-        "fecha": "2026-01-25T11:00:00",
-        "tipo": "presencial",
-        "status": "aprobada",
-        "puntos_generados": 125
+    # Jose Carlos
+    "prop_jose_001": {
+        "cliente_id": "jose_carlos_002",
+        "valor": 0.00,
+        "nombre_comercio": "Proposta 570013155 - Portabilidade",
+        "categoria": "proposta_pre_aprovada",
+        "fecha": "2026-03-10T00:00:00",
+        "tipo": "portabilidade",
+        "status": "pre_aprovada",
     },
-    "txn_carolina_002": {
-        "cliente_id": "carolina_martinez_002",
-        "valor": 45.00,
-        "nombre_comercio": "Restaurante La Barraca",
-        "categoria": "restaurante",
-        "fecha": "2026-01-22T13:30:00",
-        "tipo": "presencial",
-        "status": "aprobada",
-        "puntos_generados": 45
-    },
-    "txn_carolina_003": {
-        "cliente_id": "carolina_martinez_002",
-        "valor": 200.00,
-        "nombre_comercio": "MediaMarkt",
-        "categoria": "electrodomesticos",
-        "fecha": "2026-01-18T15:45:00",
-        "tipo": "presencial",
-        "status": "aprobada",
-        "pago_aplazado": True,
-        "cuotas": 6,
-        "puntos_generados": 0
-    },
-    "txn_carolina_004": {
-        "cliente_id": "carolina_martinez_002",
-        "valor": 65.00,
-        "nombre_comercio": "Fnac",
-        "categoria": "oficina",
-        "fecha": "2026-01-14T10:00:00",
-        "tipo": "presencial",
-        "status": "aprobada",
-        "puntos_generados": 65
-    },
-    "txn_carolina_005": {
-        "cliente_id": "carolina_martinez_002",
-        "valor": 12.99,
-        "nombre_comercio": "Spotify",
-        "categoria": "streaming",
-        "fecha": "2026-01-10T00:00:00",
-        "tipo": "online",
-        "status": "aprobada",
-        "puntos_generados": 12
+    "prop_jose_002": {
+        "cliente_id": "jose_carlos_002",
+        "valor": 1400.00,
+        "nombre_comercio": "Proposta 570013153 - Credito Pessoal",
+        "categoria": "proposta_pre_aprovada",
+        "fecha": "2026-03-10T00:00:00",
+        "tipo": "credito_pessoal",
+        "status": "pre_aprovada",
     },
 
-    # === JAVIER FERNÁNDEZ - Seguridad / Viaje ===
-    "txn_javier_001": {
-        "cliente_id": "javier_fernandez_003",
-        "valor": 400.00,
-        "nombre_comercio": "Hotel Pestana Lisboa",
-        "categoria": "hotel",
-        "fecha": "2026-01-30T14:00:00",
-        "tipo": "presencial",
-        "pais": "Portugal",
-        "ciudad": "Lisboa",
-        "status": "rechazada",
-        "motivo_rechazo": "sin_aviso_viaje",
-        "destaque": True
-    },
-    "txn_javier_002": {
-        "cliente_id": "javier_fernandez_003",
-        "valor": 85.00,
-        "nombre_comercio": "TAP Air Portugal",
-        "categoria": "aerolínea",
-        "fecha": "2026-01-28T09:00:00",
-        "tipo": "online",
-        "status": "aprobada"
-    },
-    "txn_javier_003": {
-        "cliente_id": "javier_fernandez_003",
-        "valor": 250.00,
-        "nombre_comercio": "El Corte Inglés",
-        "categoria": "tienda",
-        "fecha": "2026-01-20T16:00:00",
-        "tipo": "presencial",
-        "pais": "España",
-        "status": "aprobada"
-    },
-    "txn_javier_004": {
-        "cliente_id": "javier_fernandez_003",
-        "valor": 120.00,
-        "nombre_comercio": "Carrefour",
-        "categoria": "supermercado",
-        "fecha": "2026-01-15T17:30:00",
-        "tipo": "presencial",
-        "pais": "España",
-        "status": "aprobada"
-    },
-    "txn_javier_005": {
-        "cliente_id": "javier_fernandez_003",
-        "valor": 55.00,
-        "nombre_comercio": "Restaurante Casa Lucio",
-        "categoria": "restaurante",
-        "fecha": "2026-01-12T12:30:00",
-        "tipo": "presencial",
-        "pais": "España",
-        "status": "aprobada"
+    # Ana Beatriz
+    "prop_ana_001": {
+        "cliente_id": "ana_beatriz_003",
+        "valor": 5124.79,
+        "nombre_comercio": "Proposta 570013170 - Refinanciamento",
+        "categoria": "proposta_pre_aprovada",
+        "fecha": "2026-03-10T00:00:00",
+        "tipo": "refinanciamento",
+        "status": "pre_aprovada",
     },
 
-    # === MARÍA ELENA LÓPEZ - Reclamación / Cargo no reconocido ===
-    "txn_maria_elena_001": {
-        "cliente_id": "maria_elena_lopez_004",
-        "valor": 85.00,
-        "nombre_comercio": "Netflix",
-        "categoria": "streaming",
-        "fecha": "2026-01-29T03:15:00",
-        "tipo": "online",
-        "status": "aprobada",
-        "cargo_no_reconocido": True,
-        "destaque": True
+    # Roberto Lima
+    "prop_roberto_001": {
+        "cliente_id": "roberto_lima_004",
+        "valor": 6456.29,
+        "nombre_comercio": "Proposta 570013180 - Emprestimo Consignado INSS",
+        "categoria": "proposta_pre_aprovada",
+        "fecha": "2026-03-10T00:00:00",
+        "tipo": "emprestimo_consignado",
+        "status": "pre_aprovada",
     },
-    "txn_maria_elena_002": {
-        "cliente_id": "maria_elena_lopez_004",
-        "valor": 15.00,
-        "nombre_comercio": "Netflix",
-        "categoria": "streaming",
-        "fecha": "2026-01-05T00:00:00",
-        "tipo": "online",
-        "status": "aprobada",
-        "cargo_regular": True
+    "prop_roberto_002": {
+        "cliente_id": "roberto_lima_004",
+        "valor": 1400.00,
+        "nombre_comercio": "Proposta 570013181 - Credito Pessoal",
+        "categoria": "proposta_pre_aprovada",
+        "fecha": "2026-03-10T00:00:00",
+        "tipo": "credito_pessoal",
+        "status": "pre_aprovada",
     },
-    "txn_maria_elena_003": {
-        "cliente_id": "maria_elena_lopez_004",
-        "valor": 95.00,
-        "nombre_comercio": "Mercadona",
-        "categoria": "supermercado",
-        "fecha": "2026-01-26T16:45:00",
-        "tipo": "presencial",
-        "status": "aprobada"
+    "prop_roberto_003": {
+        "cliente_id": "roberto_lima_004",
+        "valor": 0.00,
+        "nombre_comercio": "Proposta 570013182 - Portabilidade",
+        "categoria": "proposta_pre_aprovada",
+        "fecha": "2026-03-10T00:00:00",
+        "tipo": "portabilidade",
+        "status": "pre_aprovada",
     },
-    "txn_maria_elena_004": {
-        "cliente_id": "maria_elena_lopez_004",
-        "valor": 42.00,
-        "nombre_comercio": "Farmacia Ortega",
-        "categoria": "farmacia",
-        "fecha": "2026-01-22T09:30:00",
-        "tipo": "presencial",
-        "status": "aprobada"
+    "prop_roberto_004": {
+        "cliente_id": "roberto_lima_004",
+        "valor": 5124.79,
+        "nombre_comercio": "Proposta 570013183 - Refinanciamento",
+        "categoria": "proposta_pre_aprovada",
+        "fecha": "2026-03-10T00:00:00",
+        "tipo": "refinanciamento",
+        "status": "pre_aprovada",
     },
-    "txn_maria_elena_005": {
-        "cliente_id": "maria_elena_lopez_004",
-        "valor": 28.50,
-        "nombre_comercio": "Telepizza",
-        "categoria": "restaurante",
-        "fecha": "2026-01-19T12:15:00",
-        "tipo": "presencial",
-        "status": "aprobada"
-    }
 }
 
-ESTADOS_CUENTA = {
-    "estado_roberto_001": {
-        "cliente_id": "roberto_garcia_001",
-        "periodo": "Enero 2026",
-        "fecha_corte": "2026-01-20",
-        "fecha_limite_pago": "2026-01-25",
-        "saldo_anterior": 300.00,
-        "pagos_realizados": 300.00,
-        "compras_periodo": 297.50,
-        "pago_minimo": 150.00,
-        "pago_contado": 297.50,
-        "dias_mora": 5,
-        "recargo_mora": 7.50,
-        "interes_mora_diario": 1.50,
-        "status": "en_mora"
-    }
-}
-
-# =============================================================================
-# BACKWARD COMPATIBILITY ALIASES
-# =============================================================================
-
-# For backward compatibility with code that uses the old name
+ESTADOS_CUENTA = {}
 CLIENTES_CYMBALL = CLIENTES

@@ -1,21 +1,18 @@
 <!doctype html>
-<html lang="es">
+<html lang="pt-BR">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bank Agent - Customer Service</title>
+  <title>ConsigPro - Propostas Pre-Aprovadas</title>
   <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
-  <script src="/static/js/app.js?v=20260210_generic" type="module"></script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Graphik:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
-    rel="stylesheet">
+  <script src="/static/js/app.js?v=20260310_v4" type="module"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Brand colors - loaded dynamically from /api/config */
-      --bank-primary: #0066CC;
-      --bank-primary-dark: #004C99;
-      --bank-primary-light: #3399FF;
+      --bank-primary: #0D7C3D;
+      --bank-primary-dark: #095C2C;
+      --bank-primary-light: #2EAD5E;
       --bank-white: #FFFFFF;
       --bank-light-gray: #F5F5F5;
       --bank-dark-gray: #111111;
@@ -26,580 +23,76 @@
       --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       --border-radius: 16px;
     }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #EFEFEF;
-      color: var(--bank-text);
-      line-height: 1.5;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .container {
-      display: grid;
-      grid-template-columns: 320px 1fr 320px;
-      gap: 20px;
-      max-width: 1600px;
-      margin: 0 auto;
-      padding: 20px;
-      height: 100vh;
-    }
-
-    /* Column Styles */
-    .col {
-      background: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* Header & Logo */
-    .header-logo {
-      padding: 24px;
-      background: var(--bank-primary);
-      color: white;
-      font-weight: 600;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* Left Column: Contexto */
-    .context-panel {
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    .context-card {
-      background: var(--cymball-light-gray);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-
-    .context-label {
-      font-size: 0.75rem;
-      color: #666;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
-    }
-
-    .context-value {
-      font-weight: 600;
-      font-size: 1rem;
-    }
-
-    .tag {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background: #E0E0E0;
-    }
-
-    .tag.gold {
-      background: #FFD700;
-      color: #5B4A00;
-    }
-
-    .tag.platinum {
-      background: #E5E4E2;
-      color: #333;
-    }
-
-    /* Middle Column: Chat */
-    .chat-column {
-      position: relative;
-    }
-
-    .chat-header {
-      background: white;
-      padding: 16px 24px;
-      border-bottom: 1px solid #EEE;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .avatar {
-      width: 40px;
-      height: 40px;
-      background: var(--bank-primary);
-      border-radius: 50%;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-
-    .chat-title h2 {
-      font-size: 1rem;
-      margin-bottom: 2px;
-    }
-
-    .chat-status {
-      font-size: 0.8rem;
-      color: var(--bank-success);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .chat-status::before {
-      content: '';
-      display: block;
-      width: 8px;
-      height: 8px;
-      background: var(--bank-success);
-      border-radius: 50%;
-    }
-
-    #messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      background: #F9F9F9;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .message {
-      padding: 12px 16px;
-      border-radius: 16px;
-      max-width: 80%;
-      position: relative;
-      animation: slideIn 0.3s ease;
-    }
-
-    .agent-message {
-      background: white;
-      color: var(--bank-text);
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
-      border: 1px solid #EEE;
-    }
-
-    .user-message {
-      background: var(--bank-primary);
-      color: white;
-      align-self: flex-end;
-      border-bottom-right-radius: 4px;
-    }
-
-    #messageForm {
-      padding: 16px;
-      background: white;
-      border-top: 1px solid #EEE;
-      display: flex;
-      gap: 10px;
-    }
-
-    #message {
-      flex: 1;
-      padding: 12px 16px;
-      border: 1px solid #DDD;
-      border-radius: 24px;
-      outline: none;
-      font-family: inherit;
-    }
-
-    #message:focus {
-      border-color: var(--bank-primary);
-    }
-
-    button {
-      padding: 12px 24px;
-      border: none;
-      border-radius: 24px;
-      background: var(--bank-primary);
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    button:disabled {
-      background: #CCC;
-    }
-
-    /* Right Column: Transactions */
-    .transactions-list {
-      padding: 16px;
-      overflow-y: auto;
-    }
-
-    .txn-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid #EEE;
-    }
-
-    .txn-info h4 {
-      font-size: 0.9rem;
-      margin-bottom: 2px;
-    }
-
-    /* Logs Panel */
-    .logs-container {
-      font-family: 'Courier New', monospace;
-      font-size: 0.8rem;
-      color: #333;
-      overflow-y: auto;
-      height: 100%;
-      display: none;
-      /* Hidden by default */
-    }
-
-    .logs-container.active {
-      display: block;
-    }
-
-    .log-entry {
-      border-bottom: 1px solid #eee;
-      padding: 8px 0;
-    }
-
-    .log-entry .tool-name {
-      font-weight: bold;
-      color: var(--bank-primary);
-    }
-
-    .log-entry .tool-args {
-      color: #666;
-      word-break: break-all;
-    }
-
-    /* Tabs */
-    .panel-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .tab-btn {
-      background: none;
-      border: none;
-      padding: 8px 12px;
-      cursor: pointer;
-      font-weight: 600;
-      color: #999;
-      border-bottom: 2px solid transparent;
-    }
-
-    .tab-btn.active {
-      color: var(--bank-primary);
-      border-bottom: 2px solid var(--bank-primary);
-    }
-
-    /* Audio Active Border */
-    .audio-active-border {
-      border: 2px solid var(--bank-primary);
-    }
-
-    /* Status Dot */
-    .status-dot {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      background-color: #ccc;
-      border-radius: 50%;
-      margin-right: 6px;
-      transition: background-color 0.3s;
-    }
-
-    .status-dot.connected {
-      background-color: var(--bank-success);
-      box-shadow: 0 0 4px var(--bank-success);
-    }
-
-    /* Typing Indicator */
-    .typing-indicator {
-      font-size: 0.75rem;
-      color: #888;
-      padding: 0 16px;
-      margin-bottom: 8px;
-      font-style: italic;
-      opacity: 0;
-      transition: opacity 0.3s;
-      min-height: 20px;
-    }
-
-    .typing-indicator.visible {
-      opacity: 1;
-    }
-
-    /* Recording Container */
-    #recording-container {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 8px;
-      background: #F0F0F0;
-      border-radius: 20px;
-      margin-right: 10px;
-      font-size: 0.8rem;
-      color: var(--bank-primary);
-    }
-
-    #recording-container.active {
-      display: flex;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(0, 102, 204, 0.4);
-      }
-
-      70% {
-        box-shadow: 0 0 0 6px rgba(0, 102, 204, 0);
-      }
-
-      100% {
-        box-shadow: 0 0 0 0 rgba(0, 102, 204, 0);
-      }
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Markdown Styles */
-    .message p {
-      margin-bottom: 8px;
-    }
-
-    .message p:last-child {
-      margin-bottom: 0;
-    }
-
-    .message strong {
-      font-weight: 600;
-    }
-
-    /* Control Buttons */
-    .controls {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    #startAudioButton {
-      background: white;
-      color: var(--bank-primary);
-      border: 1px solid var(--bank-primary);
-    }
-
-    #stopAudioButton {
-      background: var(--bank-error);
-      color: white;
-      display: none;
-    }
-
-    /* Floating Help Button */
-    .help-fab {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: var(--bank-primary);
-      color: white;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
-      z-index: 1000;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .help-fab:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px 16px rgba(0, 102, 204, 0.5);
-    }
-
-    /* Modal Overlay */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1001;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    /* Modal Card */
-    .modal-card {
-      background: white;
-      border-radius: 16px;
-      width: 90%;
-      max-width: 800px;
-      max-height: 85vh;
-      overflow-y: auto;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-      animation: modalSlideIn 0.3s ease;
-    }
-
-    @keyframes modalSlideIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .modal-header {
-      background: var(--bank-primary);
-      color: white;
-      padding: 20px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-    }
-
-    .modal-header h2 {
-      margin: 0;
-      font-size: 1.3rem;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 24px;
-      cursor: pointer;
-      padding: 0;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-    }
-
-    .modal-close:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .modal-body {
-      padding: 24px;
-    }
-
-    /* Journey Cards */
-    .journey-card {
-      border: 1px solid #eee;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      transition: box-shadow 0.2s;
-    }
-
-    .journey-card:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .journey-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .journey-icon {
-      font-size: 2rem;
-    }
-
-    .journey-title {
-      flex: 1;
-    }
-
-    .journey-title h3 {
-      margin: 0;
-      font-size: 1.1rem;
-      color: var(--bank-primary);
-    }
-
-    .journey-title .client-name {
-      font-size: 0.85rem;
-      color: #666;
-    }
-
-    .journey-trigger {
-      background: #f5f5f5;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
-
-    .journey-trigger h4 {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      color: #999;
-      margin-bottom: 8px;
-    }
-
-    .trigger-phrase {
-      background: var(--bank-primary-light);
-      color: white;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      display: inline-block;
-      margin: 2px;
-    }
-
-    .journey-expected {
-      font-size: 0.9rem;
-      color: #444;
-    }
-
-    .journey-expected strong {
-      color: var(--bank-primary);
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background-color: #EFEFEF; color: var(--bank-text); line-height: 1.5; height: 100vh; overflow: hidden; }
+    .container { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; max-width: 1600px; margin: 0 auto; padding: 20px; height: 100vh; }
+    .col { background: white; border-radius: var(--border-radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
+    .header-logo { padding: 24px; background: var(--bank-primary); color: white; font-weight: 600; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+    .context-panel { padding: 20px; overflow-y: auto; }
+    .context-card { background: var(--bank-light-gray); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+    .context-label { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .context-value { font-weight: 600; font-size: 1rem; }
+    .tag { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; background: #E0E0E0; }
+    .tag.gold { background: #FFD700; color: #5B4A00; }
+    .chat-column { position: relative; }
+    .chat-header { background: white; padding: 16px 24px; border-bottom: 1px solid #EEE; display: flex; align-items: center; gap: 12px; }
+    .avatar { width: 40px; height: 40px; background: var(--bank-primary); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .chat-title h2 { font-size: 1rem; margin-bottom: 2px; }
+    .chat-status { font-size: 0.8rem; color: var(--bank-success); display: flex; align-items: center; gap: 4px; }
+    .chat-status::before { content: ''; display: block; width: 8px; height: 8px; background: var(--bank-success); border-radius: 50%; }
+    #messages { flex: 1; overflow-y: auto; padding: 20px; background: #F9F9F9; display: flex; flex-direction: column; gap: 16px; }
+    .message { padding: 12px 16px; border-radius: 16px; max-width: 80%; position: relative; animation: slideIn 0.3s ease; }
+    .agent-message { background: white; color: var(--bank-text); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #EEE; }
+    .user-message { background: var(--bank-primary); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+    #messageForm { padding: 16px; background: white; border-top: 1px solid #EEE; display: flex; gap: 10px; }
+    #message { flex: 1; padding: 12px 16px; border: 1px solid #DDD; border-radius: 24px; outline: none; font-family: inherit; }
+    #message:focus { border-color: var(--bank-primary); }
+    button { padding: 12px 24px; border: none; border-radius: 24px; background: var(--bank-primary); color: white; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+    button:hover { opacity: 0.9; }
+    button:disabled { background: #CCC; }
+    .transactions-list { padding: 16px; overflow-y: auto; }
+    .txn-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #EEE; }
+    .txn-info h4 { font-size: 0.9rem; margin-bottom: 2px; }
+    .logs-container { font-family: 'Courier New', monospace; font-size: 0.8rem; color: #333; overflow-y: auto; height: 100%; display: none; }
+    .logs-container.active { display: block; }
+    .log-entry { border-bottom: 1px solid #eee; padding: 8px 0; }
+    .log-entry .tool-name { font-weight: bold; color: var(--bank-primary); }
+    .log-entry .tool-args { color: #666; word-break: break-all; }
+    .panel-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #eee; }
+    .tab-btn { background: none; border: none; padding: 8px 12px; cursor: pointer; font-weight: 600; color: #999; border-bottom: 2px solid transparent; }
+    .tab-btn.active { color: var(--bank-primary); border-bottom: 2px solid var(--bank-primary); }
+    .status-dot { display: inline-block; width: 8px; height: 8px; background-color: #ccc; border-radius: 50%; margin-right: 6px; transition: background-color 0.3s; }
+    .status-dot.connected { background-color: var(--bank-success); box-shadow: 0 0 4px var(--bank-success); }
+    .typing-indicator { font-size: 0.75rem; color: #888; padding: 0 16px; margin-bottom: 8px; font-style: italic; opacity: 0; transition: opacity 0.3s; min-height: 20px; }
+    .typing-indicator.visible { opacity: 1; }
+    #recording-container { display: none; align-items: center; justify-content: center; gap: 10px; padding: 8px; background: #F0F0F0; border-radius: 20px; margin-right: 10px; font-size: 0.8rem; color: var(--bank-primary); }
+    #recording-container.active { display: flex; animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(13,124,61,0.4); } 70% { box-shadow: 0 0 0 6px rgba(13,124,61,0); } 100% { box-shadow: 0 0 0 0 rgba(13,124,61,0); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .message p { margin-bottom: 8px; } .message p:last-child { margin-bottom: 0; } .message strong { font-weight: 600; }
+    .controls { display: flex; gap: 8px; align-items: center; }
+    #startAudioButton { background: white; color: var(--bank-primary); border: 1px solid var(--bank-primary); }
+    #stopAudioButton { background: var(--bank-error); color: white; display: none; }
+    .help-fab { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: var(--bank-primary); color: white; border: none; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(13,124,61,0.4); z-index: 1000; transition: transform 0.2s, box-shadow 0.2s; }
+    .help-fab:hover { transform: scale(1.1); box-shadow: 0 6px 16px rgba(13,124,61,0.5); }
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1001; justify-content: center; align-items: center; }
+    .modal-overlay.active { display: flex; }
+    .modal-card { background: white; border-radius: 16px; width: 90%; max-width: 800px; max-height: 85vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.2); animation: modalSlideIn 0.3s ease; }
+    @keyframes modalSlideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .modal-header { background: var(--bank-primary); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; }
+    .modal-header h2 { margin: 0; font-size: 1.3rem; }
+    .modal-close { background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+    .modal-close:hover { background: rgba(255,255,255,0.2); }
+    .modal-body { padding: 24px; }
+    .journey-card { border: 1px solid #eee; border-radius: 12px; padding: 16px; margin-bottom: 16px; transition: box-shadow 0.2s; }
+    .journey-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .journey-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .journey-icon { font-size: 2rem; }
+    .journey-title { flex: 1; }
+    .journey-title h3 { margin: 0; font-size: 1.1rem; color: var(--bank-primary); }
+    .journey-title .client-name { font-size: 0.85rem; color: #666; }
+    .journey-expected { font-size: 0.9rem; color: #444; }
+    .journey-expected strong { color: var(--bank-primary); }
   </style>
 </head>
 
@@ -608,53 +101,53 @@
     <!-- Left: Context -->
     <div class="col">
       <div class="header-logo">
-        <span>🏦</span>
-        <span>Contexto Cliente</span>
+        <span>💰</span>
+        <span>Contexto do Cliente</span>
       </div>
       <div class="context-panel">
-        <!-- Scenario Selector -->
         <div class="context-card" style="background: var(--bank-primary); color: white;">
-          <div class="context-label" style="color: rgba(255,255,255,0.7);">Escenario de Prueba</div>
+          <div class="context-label" style="color: rgba(255,255,255,0.7);">Cenario de Teste</div>
           <select id="scenario-selector" style="width: 100%; padding: 8px; border-radius: 8px; border: none; margin-top: 8px; font-weight: 600;">
-            <option value="roberto_garcia_001">Roberto - Cobros (Mora)</option>
-            <option value="carolina_martinez_002">Carolina - Beneficios (Puntos)</option>
-            <option value="javier_fernandez_003">Javier - Seguridad (Viaje)</option>
-            <option value="maria_elena_lopez_004">Maria Elena - Reclamacion</option>
+            <option value="maria_santos_001">Maria - Emprestimo Consignado</option>
+            <option value="jose_carlos_002">Jose Carlos - Portabilidade + Credito</option>
+            <option value="ana_beatriz_003">Ana Beatriz - Refinanciamento</option>
+            <option value="roberto_lima_004">Roberto - Pacote Completo</option>
+            <option value="francisca_oliveira_005">Francisca - Simulacao</option>
           </select>
         </div>
 
         <div class="context-card">
           <div class="context-label">Cliente</div>
-          <div class="context-value" id="ctx-nombre">Roberto Garcia</div>
+          <div class="context-value" id="ctx-nombre">Maria Santos</div>
           <div style="margin-top: 4px; font-size: 0.85rem; color: #666;">
-            <span>DNI: </span>
-            <span id="ctx-dni" style="font-family: monospace; background: #e8e8e8; padding: 2px 6px; border-radius: 4px;">12345678A</span>
+            <span>CPF: </span>
+            <span id="ctx-dni" style="font-family: monospace; background: #e8e8e8; padding: 2px 6px; border-radius: 4px;">111.222.333-44</span>
           </div>
           <div style="margin-top: 8px;" id="ctx-tipo-tarjeta">
-            <span class="tag gold">Premium</span>
-            <span class="tag" id="ctx-device">Visa Premium</span>
+            <span class="tag gold" id="ctx-perfil-tag">Aposentada INSS</span>
+            <span class="tag" id="ctx-device">Emprestimo Consignado</span>
           </div>
         </div>
 
         <div class="context-card">
-          <div class="context-label">Limite Disponible</div>
-          <div class="context-value" id="ctx-limite" style="color: var(--bank-success)">1.800,00 EUR</div>
+          <div class="context-label">Valor Pre-Aprovado</div>
+          <div class="context-value" id="ctx-limite" style="color: var(--bank-success)">R$ 8.500,00</div>
         </div>
 
         <div class="context-card">
-          <div class="context-label">Pago Minimo Pendiente</div>
-          <div class="context-value" id="ctx-pago-minimo" style="color: var(--bank-primary)">150,00 EUR</div>
-          <div class="context-label" id="ctx-pago-minimo-status" style="margin-top: 4px;">Pendiente</div>
+          <div class="context-label">Propostas</div>
+          <div class="context-value" id="ctx-pago-minimo" style="color: var(--bank-primary)">1 proposta</div>
+          <div class="context-label" id="ctx-pago-minimo-status" style="margin-top: 4px;">Pre-aprovada</div>
         </div>
 
         <div class="context-card">
-          <div class="context-label">Tiempo como Cliente</div>
-          <div class="context-value" id="ctx-tempo">3 anos y 5 meses</div>
+          <div class="context-label">Tempo como Cliente</div>
+          <div class="context-value" id="ctx-tempo">2 anos e 8 meses</div>
         </div>
 
         <div class="context-card">
-          <div class="context-label">Estado Tarjeta</div>
-          <div class="context-value" id="ctx-tarjeta-status">Activa</div>
+          <div class="context-label">Situacao</div>
+          <div class="context-value" id="ctx-tarjeta-status">Ativo</div>
         </div>
       </div>
     </div>
@@ -662,396 +155,306 @@
     <!-- Middle: Chat -->
     <div class="col chat-column">
       <div class="chat-header">
-        <div class="avatar" id="bank-avatar">BA</div>
+        <div class="avatar" id="bank-avatar">CF</div>
         <div class="chat-title">
-          <h2 id="bank-name">Bank Agent</h2>
+          <h2 id="bank-name">ConsigPro Financeira</h2>
           <div class="chat-status">
             <span id="status-dot" class="status-dot"></span>
             <span id="connection-status">Desconectado</span>
           </div>
         </div>
         <div style="flex:1"></div>
-
-        <!-- Audio Recording Indicator -->
-        <div id="recording-container">
-          <span>🔴 Grabando...</span>
-        </div>
-
+        <div id="recording-container"><span>🔴 Gravando...</span></div>
         <div class="controls">
           <button id="startAudioButton">🎤 Voz</button>
           <button id="stopAudioButton">⏹ Parar</button>
         </div>
       </div>
-
-      <div id="messages">
-        <!-- Initial message is now handled by Greeting Prompt or server -->
-      </div>
-
-      <div id="typing-indicator" class="typing-indicator">El agente esta escribiendo...</div>
-
+      <div id="messages"></div>
+      <div id="typing-indicator" class="typing-indicator">A consultora esta digitando...</div>
       <form id="messageForm">
-        <input type="text" id="message" placeholder="Escriba su mensaje..." autocomplete="off">
+        <input type="text" id="message" placeholder="Digite sua mensagem..." autocomplete="off">
         <button type="submit" id="sendButton">Enviar</button>
       </form>
     </div>
 
-    <!-- Right: Transactions & Logs -->
+    <!-- Right: Proposals & Logs -->
     <div class="col">
       <div class="header-logo" style="background: white; color: var(--bank-text); border-bottom: 1px solid #EEE; padding: 16px 24px;">
         <div class="panel-tabs" style="margin: 0; border: none;">
-          <button class="tab-btn active" id="tab-txn" onclick="switchTab('txn')">📄 Transacciones</button>
+          <button class="tab-btn active" id="tab-txn" onclick="switchTab('txn')">📄 Propostas</button>
           <button class="tab-btn" id="tab-logs" onclick="switchTab('logs')">🔧 Logs</button>
         </div>
       </div>
-
-      <!-- Transactions Panel -->
       <div class="transactions-list" id="panel-txn">
         <div id="transactions-container">
-          <div style="color: #888; text-align: center; padding: 20px;">
-            📄 Cargando transacciones...
-          </div>
+          <div style="color: #888; text-align: center; padding: 20px;">📄 Carregando propostas...</div>
         </div>
       </div>
-
-      <!-- Logs Panel (Tool Calls) -->
       <div class="logs-container" id="panel-logs" style="padding: 16px;">
         <div id="tool-logs" style="font-size: 0.85rem;">
-          <div style="color: #888; text-align: center; padding: 20px;">
-            🔧 Las llamadas de herramientas apareceran aqui...
-          </div>
+          <div style="color: #888; text-align: center; padding: 20px;">🔧 As chamadas de ferramentas aparecerao aqui...</div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // Tab switching for right panel
     function switchTab(tab) {
-      // Update tab buttons
       document.getElementById('tab-txn').classList.toggle('active', tab === 'txn');
       document.getElementById('tab-logs').classList.toggle('active', tab === 'logs');
-
-      // Update panels
       document.getElementById('panel-txn').style.display = tab === 'txn' ? 'block' : 'none';
       document.getElementById('panel-logs').style.display = tab === 'logs' ? 'block' : 'none';
       document.getElementById('panel-logs').classList.toggle('active', tab === 'logs');
     }
-
-    // Make switchTab globally available
     window.switchTab = switchTab;
 
-    // Function to add tool log entry (called from app.js)
     window.addToolLog = function(toolName, toolArgs) {
       const logsContainer = document.getElementById('tool-logs');
-
-      // Remove placeholder if exists
       const placeholder = logsContainer.querySelector('[style*="text-align: center"]');
       if (placeholder) placeholder.remove();
-
-      const timestamp = new Date().toLocaleTimeString('es-ES');
+      const timestamp = new Date().toLocaleTimeString('pt-BR');
       const logEntry = document.createElement('div');
       logEntry.className = 'log-entry';
-      logEntry.innerHTML = `
-        <div style="color: #888; font-size: 0.7rem;">${timestamp}</div>
-        <div class="tool-name">🔧 ${toolName}</div>
-        <div class="tool-args">${JSON.stringify(toolArgs, null, 2)}</div>
-      `;
+      logEntry.innerHTML = `<div style="color: #888; font-size: 0.7rem;">${timestamp}</div><div class="tool-name">🔧 ${toolName}</div><div class="tool-args">${JSON.stringify(toolArgs, null, 2)}</div>`;
       logsContainer.appendChild(logEntry);
       logsContainer.scrollTop = logsContainer.scrollHeight;
-
-      // Auto-switch to logs tab when tool is called
-      // switchTab('logs'); // Uncomment to auto-switch
     };
 
-    // Help Modal Functions
-    function openHelpModal() {
-      document.getElementById('help-modal').classList.add('active');
-    }
-
-    function closeHelpModal() {
-      document.getElementById('help-modal').classList.remove('active');
-    }
-
-    // Close modal when clicking outside
+    function openHelpModal() { document.getElementById('help-modal').classList.add('active'); }
+    function closeHelpModal() { document.getElementById('help-modal').classList.remove('active'); }
     document.addEventListener('DOMContentLoaded', function() {
-      const modal = document.getElementById('help-modal');
-      modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-          closeHelpModal();
-        }
-      });
+      document.getElementById('help-modal').addEventListener('click', function(e) { if (e.target === this) closeHelpModal(); });
     });
   </script>
 
-  <!-- Floating Help Button -->
-  <button class="help-fab" onclick="openHelpModal()" title="Guia de Escenarios">❓</button>
+  <button class="help-fab" onclick="openHelpModal()" title="Guia de Cenarios">❓</button>
 
   <!-- Help Modal -->
   <div class="modal-overlay" id="help-modal">
     <div class="modal-card">
       <div class="modal-header">
-        <h2>🎯 Como Probar los Escenarios</h2>
+        <h2>🎯 Como Testar os Cenarios</h2>
         <button class="modal-close" onclick="closeHelpModal()">✕</button>
       </div>
       <div class="modal-body">
-
-        <!-- Step-by-Step Flow -->
-        <div style="display: flex; justify-content: space-around; margin-bottom: 24px; padding: 20px; background: linear-gradient(135deg, #e6f0ff 0%, #fff 100%); border-radius: 12px;">
+        <div style="display: flex; justify-content: space-around; margin-bottom: 24px; padding: 20px; background: linear-gradient(135deg, #e6f5ec 0%, #fff 100%); border-radius: 12px;">
           <div style="text-align: center; flex: 1;">
             <div style="width: 48px; height: 48px; background: var(--bank-primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 1.2rem; font-weight: bold;">1</div>
-            <div style="font-weight: 600; color: var(--bank-primary);">Identificarse</div>
-            <div style="font-size: 0.8rem; color: #666; margin-top: 4px;">"Hola, soy [Nombre]"</div>
+            <div style="font-weight: 600; color: var(--bank-primary);">Selecione o cenario</div>
+            <div style="font-size: 0.8rem; color: #666; margin-top: 4px;">No painel esquerdo</div>
           </div>
           <div style="display: flex; align-items: center; color: #ccc; font-size: 1.5rem;">→</div>
           <div style="text-align: center; flex: 1;">
             <div style="width: 48px; height: 48px; background: var(--bank-primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 1.2rem; font-weight: bold;">2</div>
-            <div style="font-weight: 600; color: var(--bank-primary);">Describa el Problema</div>
-            <div style="font-size: 0.8rem; color: #666; margin-top: 4px;">Use las frases abajo</div>
+            <div style="font-weight: 600; color: var(--bank-primary);">Identifique-se</div>
+            <div style="font-size: 0.8rem; color: #666; margin-top: 4px;">"Oi, sou [Nome]"</div>
           </div>
           <div style="display: flex; align-items: center; color: #ccc; font-size: 1.5rem;">→</div>
           <div style="text-align: center; flex: 1;">
             <div style="width: 48px; height: 48px; background: var(--bank-primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 1.2rem; font-weight: bold;">3</div>
-            <div style="font-weight: 600; color: var(--bank-primary);">Interactue</div>
-            <div style="font-size: 0.8rem; color: #666; margin-top: 4px;">Responda al agente</div>
+            <div style="font-weight: 600; color: var(--bank-primary);">Interaja</div>
+            <div style="font-size: 0.8rem; color: #666; margin-top: 4px;">Siga o roteiro</div>
           </div>
         </div>
 
-        <!-- Important Note -->
         <div style="background: #fff3cd; border-left: 4px solid var(--bank-warning); padding: 12px 16px; border-radius: 8px; margin-bottom: 20px;">
           <strong style="color: #856404;">⚠️ Importante:</strong>
-          <span style="color: #856404;"> Seleccione primero el escenario en el panel izquierdo antes de iniciar la conversacion!</span>
+          <span style="color: #856404;"> Cada cenario tem um cliente diferente. Selecione o cenario antes de iniciar a conversa!</span>
         </div>
 
         <!-- Journey Tabs -->
         <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-          <button onclick="showJourney('roberto')" class="journey-tab active" id="tab-roberto" style="padding: 8px 16px; border: 2px solid var(--bank-primary); background: var(--bank-primary); color: white; border-radius: 20px; cursor: pointer; font-weight: 600;">📞 Roberto</button>
-          <button onclick="showJourney('carolina')" class="journey-tab" id="tab-carolina" style="padding: 8px 16px; border: 2px solid var(--bank-primary); background: white; color: var(--bank-primary); border-radius: 20px; cursor: pointer; font-weight: 600;">🎁 Carolina</button>
-          <button onclick="showJourney('javier')" class="journey-tab" id="tab-javier" style="padding: 8px 16px; border: 2px solid var(--bank-primary); background: white; color: var(--bank-primary); border-radius: 20px; cursor: pointer; font-weight: 600;">🔓 Javier</button>
-          <button onclick="showJourney('maria_elena')" class="journey-tab" id="tab-maria_elena" style="padding: 8px 16px; border: 2px solid var(--bank-primary); background: white; color: var(--bank-primary); border-radius: 20px; cursor: pointer; font-weight: 600;">🔒 Maria Elena</button>
+          <button onclick="showJourney('maria')" class="journey-tab active" id="tab-maria" style="padding: 8px 16px; border: 2px solid var(--bank-primary); background: var(--bank-primary); color: white; border-radius: 20px; cursor: pointer; font-weight: 600;">💰 Maria</button>
+          <button onclick="showJourney('jose')" class="journey-tab" id="tab-jose" style="padding: 8px 16px; border: 2px solid var(--bank-primary); background: white; color: var(--bank-primary); border-radius: 20px; cursor: pointer; font-weight: 600;">🔄 Jose Carlos</button>
+          <button onclick="showJourney('ana')" class="journey-tab" id="tab-ana" style="padding: 8px 16px; border: 2px solid var(--bank-primary); background: white; color: var(--bank-primary); border-radius: 20px; cursor: pointer; font-weight: 600;">📊 Ana Beatriz</button>
+          <button onclick="showJourney('roberto')" class="journey-tab" id="tab-roberto" style="padding: 8px 16px; border: 2px solid var(--bank-primary); background: white; color: var(--bank-primary); border-radius: 20px; cursor: pointer; font-weight: 600;">📋 Roberto</button>
+          <button onclick="showJourney('francisca')" class="journey-tab" id="tab-francisca" style="padding: 8px 16px; border: 2px solid var(--bank-primary); background: white; color: var(--bank-primary); border-radius: 20px; cursor: pointer; font-weight: 600;">🧮 Francisca</button>
         </div>
 
-        <!-- Journey 1: Roberto - Cobros -->
-        <div class="journey-content" id="journey-roberto">
+        <!-- Journey 1: Maria - Emprestimo -->
+        <div class="journey-content" id="journey-maria">
           <div class="journey-card" style="border: 2px solid var(--bank-primary);">
             <div class="journey-header">
-              <span class="journey-icon">📞</span>
+              <span class="journey-icon">💰</span>
               <div class="journey-title">
-                <h3>Gestion de Cobros (Mora Temprana)</h3>
-                <span class="client-name">Cliente: Roberto Garcia</span>
+                <h3>Emprestimo Consignado</h3>
+                <span class="client-name">Maria Santos - Aposentada INSS | 1 proposta | R$8.500</span>
               </div>
             </div>
-
-            <!-- DNI Info Box -->
             <div style="background: #e8f5e9; border: 1px solid var(--bank-success); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
               <span style="font-size: 1.2rem;">🆔</span>
               <div>
-                <div style="font-size: 0.75rem; color: #666;">Si le piden DNI, diga:</div>
-                <code style="font-size: 1rem; font-weight: 600; color: var(--bank-primary);">12345678A</code>
+                <div style="font-size: 0.75rem; color: #666;">CPF:</div>
+                <code style="font-size: 1rem; font-weight: 600; color: var(--bank-primary);">111.222.333-44</code>
               </div>
             </div>
-
             <div style="background: #f8f8f8; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-              <div style="font-weight: 600; color: var(--bank-primary); margin-bottom: 12px;">📝 Guion de Prueba:</div>
-
+              <div style="font-weight: 600; color: var(--bank-primary); margin-bottom: 12px;">📝 Roteiro:</div>
               <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
                 <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">1</span>
-                <div>
-                  <div style="font-weight: 500;">Identificarse:</div>
-                  <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Hola, soy Roberto Garcia"</code>
-                </div>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Oi, sou Maria Santos"</code>
               </div>
-
               <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
                 <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">2</span>
-                <div>
-                  <div style="font-weight: 500;">Describa el problema:</div>
-                  <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Creo que tengo un pago atrasado de mi tarjeta"</code>
-                </div>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Quero saber sobre minha proposta de emprestimo"</code>
               </div>
-
               <div style="display: flex; align-items: flex-start; gap: 12px;">
                 <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">3</span>
-                <div>
-                  <div style="font-weight: 500;">Cuando le pregunte sobre el pago:</div>
-                  <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Vale, ahora mismo entro en la App y hago la transferencia"</code>
-                </div>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Quero contratar sim!"</code>
               </div>
             </div>
-
-            <div class="journey-expected">
-              <strong style="color: var(--bank-success);">✅ Resultado esperado:</strong> El agente informa sobre el pago pendiente, ofrece opciones de pago y registra el compromiso del cliente.
-            </div>
+            <div class="journey-expected"><strong style="color: var(--bank-success);">✅ Esperado:</strong> Sara apresenta o emprestimo (R$8.500, 84x R$198,45) e contrata direto.</div>
           </div>
         </div>
 
-        <!-- Journey 2: Carolina - Beneficios -->
-        <div class="journey-content" id="journey-carolina" style="display: none;">
+        <!-- Journey 2: Jose Carlos - Portabilidade + Credito -->
+        <div class="journey-content" id="journey-jose" style="display: none;">
           <div class="journey-card" style="border: 2px solid var(--bank-primary);">
             <div class="journey-header">
-              <span class="journey-icon">🎁</span>
+              <span class="journey-icon">🔄</span>
               <div class="journey-title">
-                <h3>Consulta de Beneficios (Puntos/Pago Aplazado)</h3>
-                <span class="client-name">Cliente: Carolina Martinez</span>
+                <h3>Portabilidade + Credito Pessoal</h3>
+                <span class="client-name">Jose Carlos - Aposentado INSS | 2 propostas | R$1.400</span>
               </div>
             </div>
-
-            <!-- DNI Info Box -->
             <div style="background: #e8f5e9; border: 1px solid var(--bank-success); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
               <span style="font-size: 1.2rem;">🆔</span>
               <div>
-                <div style="font-size: 0.75rem; color: #666;">Si le piden DNI, diga:</div>
-                <code style="font-size: 1rem; font-weight: 600; color: var(--bank-primary);">23456789B</code>
+                <div style="font-size: 0.75rem; color: #666;">CPF:</div>
+                <code style="font-size: 1rem; font-weight: 600; color: var(--bank-primary);">234.567.890-11</code>
               </div>
             </div>
-
             <div style="background: #f8f8f8; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-              <div style="font-weight: 600; color: var(--bank-primary); margin-bottom: 12px;">📝 Guion de Prueba:</div>
-
+              <div style="font-weight: 600; color: var(--bank-primary); margin-bottom: 12px;">📝 Roteiro:</div>
               <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
                 <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">1</span>
-                <div>
-                  <div style="font-weight: 500;">Identificarse:</div>
-                  <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Hola, soy Carolina Martinez"</code>
-                </div>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Oi, sou Jose Carlos"</code>
               </div>
-
               <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
                 <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">2</span>
-                <div>
-                  <div style="font-weight: 500;">Describa el problema:</div>
-                  <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Quiero saber como comprar a plazos sin intereses con Pago Aplazado"</code>
-                </div>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Quero trazer meu consignado pra ca e pegar um credito pessoal"</code>
               </div>
-
               <div style="display: flex; align-items: flex-start; gap: 12px;">
                 <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">3</span>
-                <div>
-                  <div style="font-weight: 500;">Pregunte sobre puntos:</div>
-                  <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Y esas compras tambien me generan puntos?"</code>
-                </div>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"O que preciso fazer pra contratar o credito pessoal?"</code>
               </div>
             </div>
-
-            <div class="journey-expected">
-              <strong style="color: var(--bank-success);">✅ Resultado esperado:</strong> El agente explica Pago Aplazado, aclara que no acumula puntos, y ofrece verificar el disponible.
-            </div>
+            <div class="journey-expected"><strong style="color: var(--bank-success);">✅ Esperado:</strong> Sara explica a portabilidade, o credito pessoal e os requisitos (portabilidade obrigatoria, abertura de conta).</div>
           </div>
         </div>
 
-        <!-- Journey 3: Javier - Viaje -->
-        <div class="journey-content" id="journey-javier" style="display: none;">
+        <!-- Journey 3: Ana Beatriz - Refinanciamento -->
+        <div class="journey-content" id="journey-ana" style="display: none;">
           <div class="journey-card" style="border: 2px solid var(--bank-primary);">
             <div class="journey-header">
-              <span class="journey-icon">🔐</span>
+              <span class="journey-icon">📊</span>
               <div class="journey-title">
-                <h3>Desbloqueo por Viaje</h3>
-                <span class="client-name">Cliente: Javier Fernandez</span>
+                <h3>Refinanciamento</h3>
+                <span class="client-name">Ana Beatriz - Pensionista INSS | 1 proposta | R$5.124,79</span>
               </div>
             </div>
-
-            <!-- DNI Info Box -->
             <div style="background: #e8f5e9; border: 1px solid var(--bank-success); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
               <span style="font-size: 1.2rem;">🆔</span>
               <div>
-                <div style="font-size: 0.75rem; color: #666;">Si le piden DNI, diga:</div>
-                <code style="font-size: 1rem; font-weight: 600; color: var(--bank-primary);">34567890C</code>
+                <div style="font-size: 0.75rem; color: #666;">CPF:</div>
+                <code style="font-size: 1rem; font-weight: 600; color: var(--bank-primary);">345.678.901-22</code>
               </div>
             </div>
-
             <div style="background: #f8f8f8; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-              <div style="font-weight: 600; color: var(--bank-primary); margin-bottom: 12px;">📝 Guion de Prueba:</div>
-
+              <div style="font-weight: 600; color: var(--bank-primary); margin-bottom: 12px;">📝 Roteiro:</div>
               <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
                 <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">1</span>
-                <div>
-                  <div style="font-weight: 500;">Identificarse (con urgencia):</div>
-                  <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Hola, soy Javier. Estoy en Portugal y me han rechazado la tarjeta!"</code>
-                </div>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Oi, sou Ana Beatriz"</code>
               </div>
-
               <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
                 <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">2</span>
-                <div>
-                  <div style="font-weight: 500;">Describa el problema:</div>
-                  <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Me acaban de rechazar la tarjeta en el hotel, necesito que me la habiliten urgente!"</code>
-                </div>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Minha parcela ta muito pesada, quero ver se consigo diminuir"</code>
               </div>
-
               <div style="display: flex; align-items: flex-start; gap: 12px;">
                 <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">3</span>
-                <div>
-                  <div style="font-weight: 500;">Confirme la transaccion:</div>
-                  <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Si, soy yo en el Hotel Pestana Lisboa, haciendo check-in"</code>
-                </div>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"E ainda libera dinheiro? Quero sim!"</code>
               </div>
             </div>
-
-            <div class="journey-expected">
-              <strong style="color: var(--bank-success);">✅ Resultado esperado:</strong> El agente valida identidad, autoriza la transaccion y registra aviso de viaje a Portugal.
-            </div>
+            <div class="journey-expected"><strong style="color: var(--bank-success);">✅ Esperado:</strong> Sara mostra o contrato atual (R$450/mes), o refinanciamento (R$299,30/mes + R$5.124 liberado) e a economia.</div>
           </div>
         </div>
 
-        <!-- Journey 4: Maria Elena - Reclamacion -->
-        <div class="journey-content" id="journey-maria_elena" style="display: none;">
+        <!-- Journey 4: Roberto - Pacote Completo -->
+        <div class="journey-content" id="journey-roberto" style="display: none;">
           <div class="journey-card" style="border: 2px solid var(--bank-primary);">
             <div class="journey-header">
-              <span class="journey-icon">🔒</span>
+              <span class="journey-icon">📋</span>
               <div class="journey-title">
-                <h3>Reclamacion (Cargo no reconocido)</h3>
-                <span class="client-name">Cliente: Maria Elena Lopez</span>
+                <h3>Pacote Completo (4 propostas)</h3>
+                <span class="client-name">Roberto Lima - Aposentado INSS | 4 propostas | R$12.981,08</span>
               </div>
             </div>
-
-            <!-- DNI Info Box -->
             <div style="background: #e8f5e9; border: 1px solid var(--bank-success); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
               <span style="font-size: 1.2rem;">🆔</span>
               <div>
-                <div style="font-size: 0.75rem; color: #666;">Si le piden DNI, diga:</div>
-                <code style="font-size: 1rem; font-weight: 600; color: var(--bank-primary);">45678901D</code>
+                <div style="font-size: 0.75rem; color: #666;">CPF:</div>
+                <code style="font-size: 1rem; font-weight: 600; color: var(--bank-primary);">456.789.012-33</code>
               </div>
             </div>
-
             <div style="background: #f8f8f8; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-              <div style="font-weight: 600; color: var(--bank-primary); margin-bottom: 12px;">📝 Guion de Prueba:</div>
-
+              <div style="font-weight: 600; color: var(--bank-primary); margin-bottom: 12px;">📝 Roteiro:</div>
               <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
                 <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">1</span>
-                <div>
-                  <div style="font-weight: 500;">Identificarse:</div>
-                  <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Hola, soy Maria Elena Lopez"</code>
-                </div>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Oi, sou Roberto Lima"</code>
               </div>
-
               <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
                 <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">2</span>
-                <div>
-                  <div style="font-weight: 500;">Reporte el cargo sospechoso:</div>
-                  <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Me aparece un cargo de 85 euros de Netflix que yo no he hecho"</code>
-                </div>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Me falaram que tenho propostas pre-aprovadas, quero saber de todas"</code>
               </div>
-
               <div style="display: flex; align-items: flex-start; gap: 12px;">
                 <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">3</span>
-                <div>
-                  <div style="font-weight: 500;">Cuando pregunte sobre el bloqueo:</div>
-                  <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Si, bloquead la tarjeta. Enviadla a mi oficina por favor."</code>
-                </div>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Nao quero o credito pessoal, pode tirar. O resto quero contratar"</code>
               </div>
             </div>
-
-            <div class="journey-expected">
-              <strong style="color: var(--bank-success);">✅ Resultado esperado:</strong> El agente bloquea la tarjeta, registra la reclamacion y solicita reposicion a la oficina del cliente.
-            </div>
+            <div class="journey-expected"><strong style="color: var(--bank-success);">✅ Esperado:</strong> Sara apresenta as 4 propostas (R$12.981), remove o credito pessoal, recalcula e contrata as 3 restantes.</div>
           </div>
         </div>
 
-        <!-- Voice Tip -->
+        <!-- Journey 5: Francisca - Simulacao -->
+        <div class="journey-content" id="journey-francisca" style="display: none;">
+          <div class="journey-card" style="border: 2px solid var(--bank-primary);">
+            <div class="journey-header">
+              <span class="journey-icon">🧮</span>
+              <div class="journey-title">
+                <h3>Simulacao de Financiamento</h3>
+                <span class="client-name">Francisca Oliveira - Aposentada INSS | Sem propostas | Margem R$1.225</span>
+              </div>
+            </div>
+            <div style="background: #e8f5e9; border: 1px solid var(--bank-success); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 1.2rem;">🆔</span>
+              <div>
+                <div style="font-size: 0.75rem; color: #666;">CPF:</div>
+                <code style="font-size: 1rem; font-weight: 600; color: var(--bank-primary);">567.890.123-44</code>
+              </div>
+            </div>
+            <div style="background: #f8f8f8; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+              <div style="font-weight: 600; color: var(--bank-primary); margin-bottom: 12px;">📝 Roteiro:</div>
+              <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
+                <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">1</span>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Oi, sou Francisca Oliveira"</code>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
+                <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">2</span>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"Quero simular um emprestimo de R$15.000 em 60 meses"</code>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <span style="background: var(--bank-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">3</span>
+                <code style="background: #e8e8e8; padding: 4px 8px; border-radius: 4px; font-size: 0.9rem;">"E se eu fizer em 84 meses? Qual o maximo que consigo?"</code>
+              </div>
+            </div>
+            <div class="journey-expected"><strong style="color: var(--bank-success);">✅ Esperado:</strong> Sara calcula com Tabela Price, mostra taxa, CET, IOF, parcela e verifica se cabe na margem consignavel (R$1.225).</div>
+          </div>
+        </div>
+
         <div style="background: linear-gradient(135deg, var(--bank-primary) 0%, var(--bank-primary-dark) 100%); color: white; padding: 16px; border-radius: 12px; margin-top: 20px; display: flex; align-items: center; gap: 12px;">
           <span style="font-size: 2rem;">🎤</span>
-          <div>
-            <strong>Consejo Pro:</strong> Use el modo voz para una experiencia mas realista. El agente responde con voz natural en espanol.
-          </div>
+          <div><strong>Dica Pro:</strong> Use o modo voz para uma experiencia mais realista. A consultora Sara responde com voz natural em portugues.</div>
         </div>
       </div>
     </div>
@@ -1059,56 +462,27 @@
 
   <script>
     window.showJourney = function showJourney(name) {
-      // Hide all journeys
       document.querySelectorAll('.journey-content').forEach(el => el.style.display = 'none');
-      // Show selected
       document.getElementById('journey-' + name).style.display = 'block';
-
-      // Update tabs
-      document.querySelectorAll('.journey-tab').forEach(el => {
-        el.style.background = 'white';
-        el.style.color = 'var(--bank-primary)';
-      });
+      document.querySelectorAll('.journey-tab').forEach(el => { el.style.background = 'white'; el.style.color = 'var(--bank-primary)'; });
       document.getElementById('tab-' + name).style.background = 'var(--bank-primary)';
       document.getElementById('tab-' + name).style.color = 'white';
-
-      // Sync scenario selector in context panel
-      const selectorMap = {
-        'roberto': 'roberto_garcia_001',
-        'carolina': 'carolina_martinez_002',
-        'javier': 'javier_fernandez_003',
-        'maria_elena': 'maria_elena_lopez_004'
-      };
+      const selectorMap = { 'maria': 'maria_santos_001', 'jose': 'jose_carlos_002', 'ana': 'ana_beatriz_003', 'roberto': 'roberto_lima_004', 'francisca': 'francisca_oliveira_005' };
       const selector = document.getElementById('scenario-selector');
-      if (selector && selectorMap[name] && selector.value !== selectorMap[name]) {
-        selector.value = selectorMap[name];
-        selector.dispatchEvent(new Event('change'));
-      }
+      if (selector && selectorMap[name] && selector.value !== selectorMap[name]) { selector.value = selectorMap[name]; selector.dispatchEvent(new Event('change')); }
     }
   </script>
 
-  <!-- Load bank configuration and apply branding -->
   <script>
     (async function loadBankConfig() {
       try {
         const response = await fetch('/api/config');
         const config = await response.json();
-
-        // Update page title
         document.title = config.ui_text.app_title;
-
-        // Update bank name in header
         const bankNameEl = document.getElementById('bank-name');
         if (bankNameEl) bankNameEl.textContent = config.bank_name;
-
-        // Update avatar with bank initials
         const avatarEl = document.getElementById('bank-avatar');
-        if (avatarEl) {
-          const initials = config.bank_name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
-          avatarEl.textContent = initials;
-        }
-
-        // Apply brand colors to CSS variables
+        if (avatarEl) { const initials = config.bank_name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase(); avatarEl.textContent = initials; }
         const root = document.documentElement;
         if (config.colors) {
           root.style.setProperty('--bank-primary', config.colors.primary);
@@ -1119,16 +493,9 @@
           root.style.setProperty('--bank-error', config.colors.error);
           root.style.setProperty('--bank-text', config.colors.text);
         }
-
-        // Store config globally for other scripts
         window.bankConfig = config;
-
-        console.log('Bank config loaded:', config.bank_name);
-      } catch (error) {
-        console.error('Failed to load bank config:', error);
-      }
+      } catch (error) { console.error('Failed to load bank config:', error); }
     })();
   </script>
 </body>
-
 </html>
